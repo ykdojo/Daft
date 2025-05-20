@@ -47,6 +47,7 @@ use crate::{
         monotonically_increasing_id::MonotonicallyIncreasingIdSink,
         outer_hash_join_probe::OuterHashJoinProbeSink,
         pivot::PivotSink,
+        shuffle::ShuffleSink,
         sort::SortSink,
         streaming_sink::StreamingSinkNode,
         top_n::TopNSink,
@@ -56,7 +57,10 @@ use crate::{
         window_partition_only::WindowPartitionOnlySink,
         write::{WriteFormat, WriteSink},
     },
-    sources::{empty_scan::EmptyScanSource, in_memory::InMemorySource, source::SourceNode},
+    sources::{
+        empty_scan::EmptyScanSource, in_memory::InMemorySource, shuffle::ShuffleSource,
+        source::SourceNode,
+    },
     state_bridge::BroadcastStateBridge,
     ExecutionRuntimeContext, PipelineCreationSnafu,
 };
@@ -738,6 +742,27 @@ pub fn physical_plan_to_pipeline(
             );
             BlockingSinkNode::new(Arc::new(write_sink), child_node, stats_state.clone()).boxed()
         }
+
+        LocalPhysicalPlan::ShuffleSink(daft_local_plan::ShuffleSink {
+            input,
+            partition_by,
+            schema,
+            stats_state,
+            ..
+        }) => {
+            let child_node = physical_plan_to_pipeline(input, psets, cfg)?;
+            let shuffle_sink = ShuffleSink::new(partition_by.clone(), schema.clone());
+            BlockingSinkNode::new(Arc::new(shuffle_sink), child_node, stats_state.clone()).boxed()
+        }
+        LocalPhysicalPlan::ShuffleSource(daft_local_plan::ShuffleSource {
+            schema,
+            stats_state,
+            ..
+        }) => {
+            let shuffle_source = ShuffleSource::new(schema.clone());
+            SourceNode::new(Arc::new(shuffle_source), stats_state.clone()).boxed()
+        }
+
         #[cfg(feature = "python")]
         LocalPhysicalPlan::CatalogWrite(daft_local_plan::CatalogWrite {
             input,

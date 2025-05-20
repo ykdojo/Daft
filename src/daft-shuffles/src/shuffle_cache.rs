@@ -421,6 +421,47 @@ impl ShuffleCache {
         }
         Ok(())
     }
+
+    pub fn merge(self, other: Self) -> Self {
+        Self {
+            schema: self.schema.clone(),
+            bytes_per_file_per_partition: self
+                .bytes_per_file_per_partition
+                .iter()
+                .zip(other.bytes_per_file_per_partition.iter())
+                .map(|(a, b)| a.iter().chain(b.iter()).copied().collect_vec())
+                .collect(),
+            file_paths_per_partition: self
+                .file_paths_per_partition
+                .iter()
+                .zip(other.file_paths_per_partition.iter())
+                .map(|(a, b)| a.iter().chain(b.iter()).cloned().collect_vec())
+                .collect(),
+            rows_per_partition: self
+                .rows_per_partition
+                .iter()
+                .zip(other.rows_per_partition.iter())
+                .map(|(a, b)| a + b)
+                .collect(),
+            bytes_per_partition: self
+                .bytes_per_partition
+                .iter()
+                .zip(other.bytes_per_partition.iter())
+                .map(|(a, b)| a + b)
+                .collect(),
+            shuffle_dirs: self
+                .shuffle_dirs
+                .into_iter()
+                .chain(other.shuffle_dirs.into_iter())
+                .collect(),
+        }
+    }
+
+    pub fn merge_all(shuffle_caches: impl Iterator<Item = Self>) -> Self {
+        shuffle_caches
+            .reduce(|acc, shuffle_cache| acc.merge(shuffle_cache))
+            .unwrap()
+    }
 }
 
 #[cfg(test)]

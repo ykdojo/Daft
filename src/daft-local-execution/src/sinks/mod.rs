@@ -9,6 +9,7 @@ pub mod limit;
 pub mod monotonically_increasing_id;
 pub mod outer_hash_join_probe;
 pub mod pivot;
+pub mod shuffle;
 pub mod sort;
 pub mod streaming_sink;
 pub mod top_n;

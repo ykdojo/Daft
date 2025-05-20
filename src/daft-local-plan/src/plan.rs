@@ -54,6 +54,9 @@ pub enum LocalPhysicalPlan {
     WindowPartitionAndOrderBy(WindowPartitionAndOrderBy),
     WindowPartitionAndDynamicFrame(WindowPartitionAndDynamicFrame),
     WindowOrderByOnly(WindowOrderByOnly),
+    // Flotilla Specific Nodes for Distributed Execution
+    ShuffleSink(ShuffleSink),
+    ShuffleSource(ShuffleSource),
 }
 
 impl LocalPhysicalPlan {
@@ -96,7 +99,9 @@ impl LocalPhysicalPlan {
                 stats_state,
                 ..
             })
-            | Self::WindowOrderByOnly(WindowOrderByOnly { stats_state, .. }) => stats_state,
+            | Self::WindowOrderByOnly(WindowOrderByOnly { stats_state, .. })
+            | Self::ShuffleSink(ShuffleSink { stats_state, .. })
+            | Self::ShuffleSource(ShuffleSource { stats_state, .. }) => stats_state,
             #[cfg(feature = "python")]
             Self::CatalogWrite(CatalogWrite { stats_state, .. })
             | Self::LanceWrite(LanceWrite { stats_state, .. })
@@ -615,6 +620,8 @@ impl LocalPhysicalPlan {
             Self::DataSink(DataSink { file_schema, .. }) => file_schema,
             Self::WindowPartitionOnly(WindowPartitionOnly { schema, .. }) => schema,
             Self::WindowPartitionAndOrderBy(WindowPartitionAndOrderBy { schema, .. }) => schema,
+            Self::ShuffleSink(ShuffleSink { schema, .. }) => schema,
+            Self::ShuffleSource(ShuffleSource { schema, .. }) => schema,
         }
     }
 
@@ -873,4 +880,18 @@ pub struct WindowOrderByOnly {
     pub stats_state: StatsState,
     pub functions: Vec<WindowExpr>,
     pub aliases: Vec<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ShuffleSink {
+    pub input: LocalPhysicalPlanRef,
+    pub partition_by: Vec<ExprRef>,
+    pub schema: SchemaRef,
+    pub stats_state: StatsState,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ShuffleSource {
+    pub schema: SchemaRef,
+    pub stats_state: StatsState,
 }
