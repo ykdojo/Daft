@@ -6,7 +6,7 @@ use std::{
 
 use async_trait::async_trait;
 use common_daft_config::DaftExecutionConfig;
-use common_display::{tree::TreeDisplay, DisplayAs, DisplayLevel};
+use common_display::{DisplayAs, DisplayLevel, tree::TreeDisplay};
 use common_error::{DaftError, DaftResult};
 use common_file_formats::{FileFormatConfig, ParquetSourceConfig};
 use common_runtime::{combine_stream, get_compute_pool_num_threads, get_io_runtime};
@@ -16,7 +16,7 @@ use daft_csv::{CsvConvertOptions, CsvParseOptions, CsvReadOptions};
 use daft_io::IOStatsRef;
 use daft_json::{JsonConvertOptions, JsonParseOptions, JsonReadOptions};
 use daft_micropartition::MicroPartition;
-use daft_parquet::read::{read_parquet_bulk_async, ParquetSchemaInferenceOptions};
+use daft_parquet::read::{ParquetSchemaInferenceOptions, read_parquet_bulk_async};
 use daft_scan::{ChunkSpec, ScanTask};
 use daft_warc::WarcConvertOptions;
 use futures::{FutureExt, Stream, StreamExt};
@@ -24,9 +24,9 @@ use snafu::ResultExt;
 use tracing::instrument;
 
 use crate::{
-    channel::{create_channel, Sender},
-    sources::source::{Source, SourceStream},
     TaskSet,
+    channel::{Sender, create_channel},
+    sources::source::{Source, SourceStream},
 };
 
 pub struct ScanTaskSource {

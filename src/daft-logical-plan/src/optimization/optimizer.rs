@@ -229,11 +229,7 @@ impl OptimizerBuilder {
     }
 
     pub fn when(self, condition: bool, f: impl FnOnce(Self) -> Self) -> Self {
-        if condition {
-            f(self)
-        } else {
-            self
-        }
+        if condition { f(self) } else { self }
     }
 }
 
@@ -348,10 +344,10 @@ mod tests {
 
     use super::{Optimizer, OptimizerConfig, RuleBatch, RuleExecutionStrategy};
     use crate::{
+        LogicalPlan,
         ops::{Filter, Project},
         optimization::rules::OptimizerRule,
         test::{dummy_scan_node, dummy_scan_operator},
-        LogicalPlan,
     };
 
     /// Test that the optimizer terminates early when the plan is not transformed

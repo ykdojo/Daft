@@ -7,13 +7,13 @@ use common_scan_info::{Pushdowns, ScanState, ScanTaskLikeRef};
 use common_treenode::{Transformed, TreeNode, TreeNodeRecursion, TreeNodeRewriter};
 use daft_local_plan::translate;
 use daft_logical_plan::{
-    ops::Source, source_info::PlaceHolderInfo, ClusteringSpec, InMemoryInfo, LogicalPlan,
-    LogicalPlanRef, SourceInfo,
+    ClusteringSpec, InMemoryInfo, LogicalPlan, LogicalPlanRef, SourceInfo, ops::Source,
+    source_info::PlaceHolderInfo,
 };
 
 use crate::pipeline_node::{
-    in_memory_source::InMemorySourceNode, intermediate::IntermediateNode, limit::LimitNode,
-    scan_source::ScanSourceNode, DistributedPipelineNode,
+    DistributedPipelineNode, in_memory_source::InMemorySourceNode, intermediate::IntermediateNode,
+    limit::LimitNode, scan_source::ScanSourceNode,
 };
 
 pub(crate) fn logical_plan_to_pipeline_node(
@@ -203,10 +203,10 @@ fn extract_inputs_from_logical_plan(
 mod tests {
     use std::sync::Arc;
 
-    use common_scan_info::{test::DummyScanOperator, ScanOperatorRef};
+    use common_scan_info::{ScanOperatorRef, test::DummyScanOperator};
     use daft_dsl::{lit, resolved_col};
     use daft_logical_plan::{
-        logical_plan::LogicalPlan, ops::Source, source_info::SourceInfo, LogicalPlanBuilder,
+        LogicalPlanBuilder, logical_plan::LogicalPlan, ops::Source, source_info::SourceInfo,
     };
     use daft_schema::{dtype::DataType, field::Field, schema::Schema};
 
@@ -334,9 +334,11 @@ mod tests {
             Field::new("value", DataType::Int64),
         ];
         let plan = dummy_scan_node(dummy_scan_operator(fields))
-            .with_columns(vec![resolved_col("group")
-                .add(resolved_col("value"))
-                .alias("group_value")])?
+            .with_columns(vec![
+                resolved_col("group")
+                    .add(resolved_col("value"))
+                    .alias("group_value"),
+            ])?
             .optimize()? // To fill scan node with tasks
             .build();
 
@@ -362,9 +364,11 @@ mod tests {
         ];
         let plan = dummy_scan_node(dummy_scan_operator(fields))
             .optimize()? // To fill scan node with tasks
-            .with_columns(vec![resolved_col("group")
-                .add(resolved_col("value"))
-                .alias("group_value")])?
+            .with_columns(vec![
+                resolved_col("group")
+                    .add(resolved_col("value"))
+                    .alias("group_value"),
+            ])?
             .filter(resolved_col("group_value").eq(lit(0)))?
             .limit(20, false)?
             .select(vec![resolved_col("group_value")])?

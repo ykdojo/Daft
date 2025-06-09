@@ -11,7 +11,7 @@ mod linear;
 mod scheduler_actor;
 
 use common_error::DaftResult;
-pub(crate) use scheduler_actor::{spawn_default_scheduler_actor, SchedulerHandle, SubmittedTask};
+pub(crate) use scheduler_actor::{SchedulerHandle, SubmittedTask, spawn_default_scheduler_actor};
 use tokio_util::sync::CancellationToken;
 
 #[allow(dead_code)]

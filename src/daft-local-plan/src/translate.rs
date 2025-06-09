@@ -4,14 +4,14 @@ use common_error::{DaftError, DaftResult};
 use common_scan_info::ScanState;
 use daft_core::join::JoinStrategy;
 use daft_dsl::{
+    WindowExpr,
     expr::{
         bound_col,
         bound_expr::{BoundAggExpr, BoundExpr, BoundWindowExpr},
     },
     join::normalize_join_keys,
-    WindowExpr,
 };
-use daft_logical_plan::{stats::StatsState, JoinType, LogicalPlan, LogicalPlanRef, SourceInfo};
+use daft_logical_plan::{JoinType, LogicalPlan, LogicalPlanRef, SourceInfo, stats::StatsState};
 use daft_physical_plan::extract_agg_expr;
 
 use super::plan::{LocalPhysicalPlan, LocalPhysicalPlanRef};
@@ -354,7 +354,9 @@ pub fn translate(plan: &LogicalPlanRef) -> DaftResult<LocalPhysicalPlanRef> {
             ))
         }
         LogicalPlan::Repartition(repartition) => {
-            log::warn!("Repartition not supported on the NativeRunner. This will be a no-op. Please use the RayRunner instead if you need to repartition");
+            log::warn!(
+                "Repartition not supported on the NativeRunner. This will be a no-op. Please use the RayRunner instead if you need to repartition"
+            );
             translate(&repartition.input)
         }
         LogicalPlan::MonotonicallyIncreasingId(monotonically_increasing_id) => {

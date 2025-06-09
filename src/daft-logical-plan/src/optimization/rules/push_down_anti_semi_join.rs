@@ -3,13 +3,13 @@ use std::{collections::HashMap, sync::Arc};
 use common_error::DaftResult;
 use common_treenode::{Transformed, TreeNode, TreeNodeRecursion};
 use daft_core::join::{JoinSide, JoinType};
-use daft_dsl::{left_col, Column, Expr, ResolvedColumn};
+use daft_dsl::{Column, Expr, ResolvedColumn, left_col};
 use daft_schema::field::Field;
 
 use super::OptimizerRule;
 use crate::{
-    ops::{join::JoinPredicate, Distinct, Filter, Join, Project, Sort},
     LogicalPlan, LogicalPlanRef,
+    ops::{Distinct, Filter, Join, Project, Sort, join::JoinPredicate},
 };
 
 /// Optimizer rule to push anti and semi joins down a plan tree.

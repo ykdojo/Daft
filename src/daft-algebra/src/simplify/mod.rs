@@ -5,7 +5,7 @@ mod numeric;
 use boolean::{simplify_binary_compare, simplify_boolean_expr};
 use common_error::DaftResult;
 use common_treenode::{Transformed, TreeNode};
-use daft_dsl::{lit, Expr, ExprRef, LiteralValue};
+use daft_dsl::{Expr, ExprRef, LiteralValue, lit};
 use daft_schema::schema::SchemaRef;
 use null::simplify_expr_with_null;
 use numeric::simplify_numeric_expr;
@@ -85,7 +85,7 @@ mod test {
     use std::sync::Arc;
 
     use common_error::DaftResult;
-    use daft_dsl::{lit, null_lit, resolved_col, ExprRef};
+    use daft_dsl::{ExprRef, lit, null_lit, resolved_col};
     use daft_schema::{
         dtype::DataType,
         field::Field,

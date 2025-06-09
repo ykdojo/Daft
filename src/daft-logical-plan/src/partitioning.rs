@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use daft_dsl::{functions::FunctionArgs, Column, ExprRef, ResolvedColumn};
+use daft_dsl::{Column, ExprRef, ResolvedColumn, functions::FunctionArgs};
 use indexmap::IndexMap;
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
@@ -228,7 +228,7 @@ fn translate_clustering_spec_expr(
     //  - Ok(expr) with expr being the translation, or
     //  - Err(()) if no translation is possible in the new projection.
 
-    use daft_dsl::{binary_op, Expr};
+    use daft_dsl::{Expr, binary_op};
 
     match clustering_spec_expr.as_ref() {
         Expr::Column(Column::Resolved(ResolvedColumn::Basic(name))) => {

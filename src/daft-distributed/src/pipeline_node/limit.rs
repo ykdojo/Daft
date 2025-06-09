@@ -3,7 +3,7 @@ use std::{cmp::Ordering, collections::HashMap, sync::Arc};
 use common_daft_config::DaftExecutionConfig;
 use common_error::DaftResult;
 use daft_local_plan::LocalPhysicalPlan;
-use daft_logical_plan::{stats::StatsState, InMemoryInfo};
+use daft_logical_plan::{InMemoryInfo, stats::StatsState};
 use daft_schema::schema::SchemaRef;
 use futures::StreamExt;
 
@@ -14,7 +14,7 @@ use crate::{
         task::{SchedulingStrategy, SwordfishTask},
     },
     stage::StageContext,
-    utils::channel::{create_channel, Sender},
+    utils::channel::{Sender, create_channel},
 };
 
 #[allow(dead_code)]

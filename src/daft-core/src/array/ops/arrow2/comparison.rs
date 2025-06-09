@@ -1,5 +1,5 @@
 use arrow2::{
-    array::{ord::build_compare, Array, PrimitiveArray},
+    array::{Array, PrimitiveArray, ord::build_compare},
     datatypes::DataType,
     error::Result,
 };

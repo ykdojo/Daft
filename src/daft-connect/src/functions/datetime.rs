@@ -5,7 +5,7 @@ use daft_functions_temporal::{
 };
 use daft_schema::dtype::DataType;
 
-use super::{FunctionModule, UnaryFunction, TODO_FUNCTION};
+use super::{FunctionModule, TODO_FUNCTION, UnaryFunction};
 
 /// https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/functions.html#datetime-functions
 pub struct DatetimeFunctions;

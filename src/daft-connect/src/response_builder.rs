@@ -1,9 +1,8 @@
 use arrow2::io::ipc::write::StreamWriter;
 use daft_recordbatch::RecordBatch;
 use spark_connect::{
-    analyze_plan_response,
+    AnalyzePlanResponse, DataType, ExecutePlanResponse, analyze_plan_response,
     execute_plan_response::{ArrowBatch, ResponseType, ResultComplete},
-    AnalyzePlanResponse, DataType, ExecutePlanResponse,
 };
 use uuid::Uuid;
 

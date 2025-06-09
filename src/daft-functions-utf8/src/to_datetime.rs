@@ -1,12 +1,13 @@
-use common_error::{ensure, DaftError, DaftResult};
+use common_error::{DaftError, DaftResult, ensure};
 use daft_core::{
     datatypes::{format_string_has_offset, infer_timeunit_from_format_string},
     prelude::{AsArrow, DataType, Field, Int64Array, Schema, TimeUnit, TimestampArray, Utf8Array},
     series::{IntoSeries, Series},
 };
 use daft_dsl::{
+    ExprRef, LiteralValue,
     functions::{FunctionArgs, ScalarFunction, ScalarUDF},
-    lit, ExprRef, LiteralValue,
+    lit,
 };
 use serde::{Deserialize, Serialize};
 

@@ -9,8 +9,8 @@ use daft_micropartition::MicroPartition;
 use daft_recordbatch::RecordBatch;
 
 use crate::{
-    parquet_writer::{create_native_parquet_writer, native_parquet_writer_supported},
     AsyncFileWriter, WriterFactory,
+    parquet_writer::{create_native_parquet_writer, native_parquet_writer_supported},
 };
 
 enum WriterType {

@@ -6,9 +6,9 @@ use daft_dsl::expr::bound_expr::BoundExpr;
 use daft_logical_plan::JoinType;
 use daft_micropartition::MicroPartition;
 use daft_recordbatch::{GrowableRecordBatch, ProbeState, Probeable, RecordBatch};
-use futures::{stream, StreamExt};
+use futures::{StreamExt, stream};
 use itertools::Itertools;
-use tracing::{info_span, instrument, Span};
+use tracing::{Span, info_span, instrument};
 
 use super::{
     outer_hash_join_probe::IndexBitmapBuilder,
@@ -17,9 +17,9 @@ use super::{
     },
 };
 use crate::{
+    ExecutionRuntimeContext, ExecutionTaskSpawner,
     dispatcher::{DispatchSpawner, RoundRobinDispatcher, UnorderedDispatcher},
     state_bridge::BroadcastStateBridgeRef,
-    ExecutionRuntimeContext, ExecutionTaskSpawner,
 };
 
 enum AntiSemiProbeState {

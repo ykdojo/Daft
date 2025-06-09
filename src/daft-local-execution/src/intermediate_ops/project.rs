@@ -3,18 +3,18 @@ use std::{cmp::max, sync::Arc};
 use common_error::{DaftError, DaftResult};
 use common_runtime::get_compute_pool_num_threads;
 use daft_dsl::{
+    Expr,
     common_treenode::{self, TreeNode},
     expr::bound_expr::BoundExpr,
     functions::{
-        python::{get_resource_request, PythonUDF},
         FunctionExpr, ScalarFunction,
+        python::{PythonUDF, get_resource_request},
     },
-    Expr,
 };
 use daft_functions_uri::download::UrlDownloadArgs;
 use daft_micropartition::MicroPartition;
 use itertools::Itertools;
-use tracing::{instrument, Span};
+use tracing::{Span, instrument};
 
 use super::intermediate_op::{
     IntermediateOpExecuteResult, IntermediateOpState, IntermediateOperator,

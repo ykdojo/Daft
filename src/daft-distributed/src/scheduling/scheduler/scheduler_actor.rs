@@ -11,7 +11,7 @@ use tokio_util::sync::CancellationToken;
 use tracing::instrument;
 
 use super::{
-    default::DefaultScheduler, linear::LinearScheduler, SchedulableTask, Scheduler, WorkerSnapshot,
+    SchedulableTask, Scheduler, WorkerSnapshot, default::DefaultScheduler, linear::LinearScheduler,
 };
 use crate::{
     pipeline_node::MaterializedOutput,
@@ -21,7 +21,7 @@ use crate::{
         worker::{Worker, WorkerManager},
     },
     utils::{
-        channel::{create_channel, create_oneshot_channel, OneshotReceiver, Receiver, Sender},
+        channel::{OneshotReceiver, Receiver, Sender, create_channel, create_oneshot_channel},
         joinset::JoinSet,
     },
 };
@@ -256,8 +256,8 @@ mod tests {
     use crate::scheduling::{
         scheduler::test_utils::setup_workers,
         task::tests::MockTaskFailure,
-        tests::{create_mock_partition_ref, MockTask, MockTaskBuilder},
-        worker::{tests::MockWorkerManager, WorkerId},
+        tests::{MockTask, MockTaskBuilder, create_mock_partition_ref},
+        worker::{WorkerId, tests::MockWorkerManager},
     };
 
     struct SchedulerActorTestContext {
@@ -526,10 +526,12 @@ mod tests {
 
         let test_context_result = test_context.cleanup().await;
         assert!(test_context_result.is_err());
-        assert!(test_context_result
-            .unwrap_err()
-            .to_string()
-            .contains("test panic"));
+        assert!(
+            test_context_result
+                .unwrap_err()
+                .to_string()
+                .contains("test panic")
+        );
 
         Ok(())
     }

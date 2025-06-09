@@ -7,7 +7,7 @@ use std::{
 use arrow2::{
     bitmap::Bitmap,
     io::parquet::read::schema::{
-        infer_schema_with_options, SchemaInferenceOptions, StringEncoding,
+        SchemaInferenceOptions, StringEncoding, infer_schema_with_options,
     },
 };
 use common_error::DaftResult;
@@ -15,20 +15,20 @@ use common_runtime::get_io_runtime;
 use daft_core::prelude::*;
 #[cfg(feature = "python")]
 use daft_core::python::PyTimeUnit;
-use daft_dsl::{expr::bound_expr::BoundExpr, optimization::get_required_columns, ExprRef};
-use daft_io::{parse_url, IOClient, IOStatsRef, SourceType};
+use daft_dsl::{ExprRef, expr::bound_expr::BoundExpr, optimization::get_required_columns};
+use daft_io::{IOClient, IOStatsRef, SourceType, parse_url};
 use daft_recordbatch::RecordBatch;
 use futures::{
+    Stream, StreamExt, TryStreamExt,
     future::{join_all, try_join_all},
     stream::BoxStream,
-    Stream, StreamExt, TryStreamExt,
 };
 use itertools::Itertools;
 use parquet2::metadata::FileMetaData;
 use serde::{Deserialize, Serialize};
 use snafu::ResultExt;
 
-use crate::{file::ParquetReaderBuilder, JoinSnafu};
+use crate::{JoinSnafu, file::ParquetReaderBuilder};
 
 #[cfg(feature = "python")]
 #[derive(Clone)]
@@ -382,7 +382,7 @@ async fn stream_parquet_single(
     delete_rows: Option<Vec<i64>>,
     maintain_order: bool,
     chunk_size: Option<usize>,
-) -> DaftResult<impl Stream<Item = DaftResult<RecordBatch>> + Send> {
+) -> DaftResult<impl Stream<Item = DaftResult<RecordBatch>> + Send + use<>> {
     let field_id_mapping_provided = field_id_mapping.is_some();
     let columns_to_return = columns.map(|s| s.iter().map(|s| (*s).to_string()).collect_vec());
     let num_rows_to_return = num_rows;

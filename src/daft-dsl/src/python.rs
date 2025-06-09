@@ -16,19 +16,19 @@ use daft_core::{
 };
 use indexmap::IndexMap;
 use pyo3::{
+    IntoPyObjectExt,
     exceptions::PyValueError,
     intern,
     prelude::*,
     pyclass::CompareOp,
     types::{PyBool, PyBytes, PyFloat, PyInt, PyNone, PyString},
-    IntoPyObjectExt,
 };
 use serde::{Deserialize, Serialize};
 
 use crate::{
+    ExprRef, LiteralValue, Operator,
     expr::{Expr, WindowExpr},
     visitor::accept,
-    ExprRef, LiteralValue, Operator,
 };
 
 #[pyfunction]
@@ -460,7 +460,7 @@ impl PyExpr {
     }
 
     pub fn __richcmp__(&self, other: &Self, op: CompareOp) -> PyResult<Self> {
-        use crate::{binary_op, Operator};
+        use crate::{Operator, binary_op};
         match op {
             CompareOp::Lt => Ok(binary_op(Operator::Lt, self.into(), other.into()).into()),
             CompareOp::Le => Ok(binary_op(Operator::LtEq, self.into(), other.into()).into()),

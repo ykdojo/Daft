@@ -7,15 +7,15 @@ use std::{
 use async_trait::async_trait;
 use common_error::{DaftError, DaftResult};
 use common_file_formats::FileFormat;
-use common_runtime::{get_compute_runtime, RuntimeTask};
+use common_runtime::{RuntimeTask, get_compute_runtime};
 use daft_core::prelude::*;
-use daft_io::{parse_url, SourceType};
+use daft_io::{SourceType, parse_url};
 use daft_micropartition::MicroPartition;
 use daft_recordbatch::RecordBatch;
 use parquet::{
     arrow::{
-        arrow_writer::{compute_leaves, get_column_writers, ArrowColumnChunk, ArrowLeafColumn},
         ArrowSchemaConverter,
+        arrow_writer::{ArrowColumnChunk, ArrowLeafColumn, compute_leaves, get_column_writers},
     },
     basic::Compression,
     file::{
@@ -25,7 +25,7 @@ use parquet::{
     schema::types::SchemaDescriptor,
 };
 
-use crate::{utils::record_batch_to_partition_path, AsyncFileWriter};
+use crate::{AsyncFileWriter, utils::record_batch_to_partition_path};
 
 type ParquetColumnWriterHandle = RuntimeTask<DaftResult<ArrowColumnChunk>>;
 
@@ -189,7 +189,7 @@ impl ParquetWriter {
                         None => {
                             return Err(DaftError::InternalError(
                                 "Mismatch between leaves and column slots".to_string(),
-                            ))
+                            ));
                         }
                     }
                 }

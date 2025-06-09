@@ -5,13 +5,13 @@ use common_runtime::get_io_runtime;
 use daft_compression::CompressionCodec;
 use daft_core::{prelude::*, utils::arrow::cast_array_for_daft_if_needed};
 use daft_dsl::{expr::bound_expr::BoundExpr, optimization::get_required_columns};
-use daft_io::{parse_url, GetResult, IOClient, IOStatsRef, SourceType};
+use daft_io::{GetResult, IOClient, IOStatsRef, SourceType, parse_url};
 use daft_recordbatch::RecordBatch;
-use futures::{stream::BoxStream, Stream, StreamExt, TryStreamExt};
+use futures::{Stream, StreamExt, TryStreamExt, stream::BoxStream};
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
 use snafu::{
-    futures::{try_future::Context, TryFutureExt, TryStreamExt as _},
     ResultExt,
+    futures::{TryFutureExt, TryStreamExt as _, try_future::Context},
 };
 use tokio::{
     fs::File,
@@ -21,8 +21,8 @@ use tokio::{
 use tokio_util::io::StreamReader;
 
 use crate::{
-    decoding::deserialize_records, local::read_json_local, schema::read_json_schema_single,
     ArrowSnafu, ChunkSnafu, JsonConvertOptions, JsonParseOptions, JsonReadOptions,
+    decoding::deserialize_records, local::read_json_local, schema::read_json_schema_single,
 };
 
 type TableChunkResult =
@@ -335,7 +335,7 @@ pub async fn stream_json(
     };
 
     let (chunk_stream, _fields) = read_json_single_into_stream(
-        &uri,
+        uri.as_str(),
         convert_options_with_predicate_columns.unwrap_or_default(),
         parse_options.unwrap_or_default(),
         read_options,
@@ -404,7 +404,10 @@ async fn read_json_single_into_stream(
     read_options: Option<JsonReadOptions>,
     io_client: Arc<IOClient>,
     io_stats: Option<IOStatsRef>,
-) -> DaftResult<(impl TableChunkStream + Send, arrow2::datatypes::Schema)> {
+) -> DaftResult<(
+    impl TableChunkStream + Send + use<>,
+    arrow2::datatypes::Schema,
+)> {
     let schema = match convert_options.schema {
         Some(schema) => schema.to_arrow()?,
         None => read_json_schema_single(
@@ -594,9 +597,9 @@ mod tests {
 
     use super::read_json;
     use crate::{
+        JsonConvertOptions, JsonReadOptions,
         decoding::deserialize_records,
         inference::{column_types_map_to_fields, infer_records_schema},
-        JsonConvertOptions, JsonReadOptions,
     };
 
     fn check_equal_local_arrow2(

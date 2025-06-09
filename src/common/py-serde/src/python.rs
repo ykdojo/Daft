@@ -1,11 +1,11 @@
 use std::{fmt, sync::Arc};
 
 #[cfg(feature = "python")]
-use pyo3::{types::PyAnyMethods, PyObject, PyResult, Python};
+use pyo3::{PyObject, PyResult, Python, types::PyAnyMethods};
 use serde::{
+    Deserializer, Serializer,
     de::{Error as DeError, Visitor},
     ser::Error as SerError,
-    Deserializer, Serializer,
 };
 
 #[cfg(feature = "python")]
@@ -89,9 +89,9 @@ macro_rules! impl_bincode_py_state_serialization {
                 py: Python<'py>,
             ) -> PyResult<(PyObject, (pyo3::Bound<'py, pyo3::types::PyBytes>,))> {
                 use pyo3::{
+                    PyErr, PyTypeInfo,
                     exceptions::PyRuntimeError,
                     types::{PyAnyMethods, PyBytes},
-                    PyErr, PyTypeInfo,
                 };
                 Ok((
                     Self::type_object(py)

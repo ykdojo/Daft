@@ -4,10 +4,10 @@ use common_error::{DaftError, DaftResult};
 use common_treenode::{Transformed, TreeNode, TreeNodeRecursion};
 use daft_core::prelude::*;
 use daft_dsl::{
+    AggExpr, Column, Expr, ExprRef, PlanRef, ResolvedColumn, UnresolvedColumn,
     expr::window::WindowSpec,
-    functions::{struct_::StructExpr, FunctionExpr},
-    has_agg, is_actor_pool_udf, left_col, resolved_col, right_col, AggExpr, Column, Expr, ExprRef,
-    PlanRef, ResolvedColumn, UnresolvedColumn,
+    functions::{FunctionExpr, struct_::StructExpr},
+    has_agg, is_actor_pool_udf, left_col, resolved_col, right_col,
 };
 use typed_builder::TypedBuilder;
 
@@ -24,7 +24,8 @@ fn expand_wildcard(expr: ExprRef, plan: LogicalPlanRef) -> DaftResult<Vec<ExprRe
     ) -> DaftResult<()> {
         if wildcard_expansion.is_some() {
             Err(DaftError::ValueError(format!(
-                "Error resolving expression {expr}: cannot have multiple wildcard columns in one expression tree.")))
+                "Error resolving expression {expr}: cannot have multiple wildcard columns in one expression tree."
+            )))
         } else {
             *wildcard_expansion = Some(names.map(ToString::to_string).collect());
 

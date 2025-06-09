@@ -3,7 +3,7 @@ use std::cmp::min;
 use common_error::DaftResult;
 #[cfg(feature = "python")]
 use common_py_serde::pickle_dumps;
-use rand::{rngs::StdRng, seq::SliceRandom, SeedableRng};
+use rand::{SeedableRng, rngs::StdRng, seq::SliceRandom};
 
 use super::as_arrow::AsArrow;
 #[cfg(feature = "python")]

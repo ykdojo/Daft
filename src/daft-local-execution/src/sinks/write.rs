@@ -9,15 +9,15 @@ use daft_logical_plan::OutputFileInfo;
 use daft_micropartition::MicroPartition;
 use daft_recordbatch::RecordBatch;
 use daft_writers::{AsyncFileWriter, WriterFactory};
-use tracing::{instrument, Span};
+use tracing::{Span, instrument};
 
 use super::blocking_sink::{
     BlockingSink, BlockingSinkFinalizeResult, BlockingSinkSinkResult, BlockingSinkState,
     BlockingSinkStatus,
 };
 use crate::{
-    dispatcher::{DispatchSpawner, PartitionedDispatcher, UnorderedDispatcher},
     ExecutionRuntimeContext, ExecutionTaskSpawner,
+    dispatcher::{DispatchSpawner, PartitionedDispatcher, UnorderedDispatcher},
 };
 
 #[derive(Debug)]

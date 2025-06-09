@@ -4,19 +4,20 @@ use std::{
 };
 
 use common_error::DaftResult;
-use common_scan_info::{rewrite_predicate_for_partitioning, PredicateGroups, ScanState};
+use common_scan_info::{PredicateGroups, ScanState, rewrite_predicate_for_partitioning};
 use common_treenode::{DynTreeNode, Transformed, TreeNode};
 use daft_algebra::boolean::{combine_conjunction, split_conjunction, to_cnf};
 use daft_dsl::{
+    ExprRef,
     optimization::{get_required_columns, replace_columns_with_expressions},
-    resolved_col, ExprRef,
+    resolved_col,
 };
 
 use super::OptimizerRule;
 use crate::{
+    LogicalPlan,
     ops::{Concat, Filter, Join, Project, Source},
     source_info::SourceInfo,
-    LogicalPlan,
 };
 
 /// Optimization rules for pushing Filters further into the logical plan.
@@ -82,7 +83,7 @@ impl PushDownFilter {
                     SourceInfo::Physical(external_info)
                         if let Some(_) = external_info.pushdowns.limit =>
                     {
-                        return Ok(Transformed::no(plan))
+                        return Ok(Transformed::no(plan));
                     }
 
                     // Pushdown filter into the Source node
@@ -360,18 +361,18 @@ mod tests {
     use common_error::DaftResult;
     use common_scan_info::Pushdowns;
     use daft_core::prelude::*;
-    use daft_dsl::{functions::ScalarFunction, lit, resolved_col, unresolved_col, ExprRef};
+    use daft_dsl::{ExprRef, functions::ScalarFunction, lit, resolved_col, unresolved_col};
     use daft_functions_uri::download::UrlDownload;
     use rstest::rstest;
 
     use crate::{
+        LogicalPlan,
         optimization::{
             optimizer::{RuleBatch, RuleExecutionStrategy},
             rules::PushDownFilter,
             test::assert_optimized_plan_with_rules_eq,
         },
         test::{dummy_scan_node, dummy_scan_node_with_pushdowns, dummy_scan_operator},
-        LogicalPlan,
     };
 
     /// Helper that creates an optimizer with the PushDownFilter rule registered, optimizes

@@ -3,7 +3,7 @@ use std::{
     fmt::Write,
     future::Future,
     pin::Pin,
-    sync::{atomic::AtomicU64, Arc},
+    sync::{Arc, atomic::AtomicU64},
     task::{Context, Poll},
     time::Instant,
 };
@@ -11,8 +11,8 @@ use std::{
 use common_tracing::should_enable_opentelemetry;
 use daft_micropartition::MicroPartition;
 use kanal::SendError;
-use opentelemetry::{global, metrics::Counter, KeyValue};
-use tracing::{instrument::Instrumented, Instrument};
+use opentelemetry::{KeyValue, global, metrics::Counter};
+use tracing::{Instrument, instrument::Instrumented};
 
 use crate::{
     channel::{Receiver, Sender},

@@ -4,18 +4,18 @@ use common_error::DaftResult;
 use common_treenode::{DynTreeNode, Transformed, TreeNode};
 use daft_core::prelude::*;
 use daft_dsl::{
-    is_actor_pool_udf,
+    Column, Expr, ExprRef, ResolvedColumn, is_actor_pool_udf,
     optimization::{get_required_columns, replace_columns_with_expressions, requires_computation},
-    resolved_col, Column, Expr, ExprRef, ResolvedColumn,
+    resolved_col,
 };
 use indexmap::IndexSet;
 use itertools::Itertools;
 
 use super::OptimizerRule;
 use crate::{
+    LogicalPlan, LogicalPlanRef,
     ops::{ActorPoolProject, Aggregate, Join, Pivot, Project, Source},
     source_info::SourceInfo,
-    LogicalPlan, LogicalPlanRef,
 };
 
 #[derive(Default, Debug)]
@@ -719,14 +719,16 @@ mod tests {
     use common_scan_info::Pushdowns;
     use daft_core::prelude::*;
     use daft_dsl::{
+        Expr, ExprRef,
         functions::{
-            python::{MaybeInitializedUDF, PythonUDF, RuntimePyObject},
             FunctionExpr,
+            python::{MaybeInitializedUDF, PythonUDF, RuntimePyObject},
         },
-        lit, resolved_col, unresolved_col, Expr, ExprRef,
+        lit, resolved_col, unresolved_col,
     };
 
     use crate::{
+        LogicalPlan,
         ops::{Project, Unpivot},
         optimization::{
             optimizer::{RuleBatch, RuleExecutionStrategy},
@@ -734,7 +736,6 @@ mod tests {
             test::assert_optimized_plan_with_rules_eq,
         },
         test::{dummy_scan_node, dummy_scan_node_with_pushdowns, dummy_scan_operator},
-        LogicalPlan,
     };
 
     /// Helper that creates an optimizer with the PushDownProjection rule registered, optimizes

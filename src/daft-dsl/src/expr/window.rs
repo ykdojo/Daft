@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "python")]
 use crate::python::PyExpr;
-use crate::{expr::Expr, LiteralValue};
+use crate::{LiteralValue, expr::Expr};
 
 /// Represents a window frame boundary
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Hash)]

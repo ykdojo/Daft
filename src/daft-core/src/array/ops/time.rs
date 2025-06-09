@@ -4,8 +4,8 @@ use arrow2::{
     self,
     array::{Array, PrimitiveArray},
     compute::arithmetics::{
-        time::{add_interval, sub_interval},
         ArraySub,
+        time::{add_interval, sub_interval},
     },
     datatypes::ArrowDataType,
     types::months_days_ns,
@@ -16,7 +16,7 @@ use common_error::{DaftError, DaftResult};
 use super::as_arrow::AsArrow;
 use crate::{
     array::prelude::*,
-    datatypes::{prelude::*, IntervalArray},
+    datatypes::{IntervalArray, prelude::*},
 };
 
 fn process_interval(interval: &str, timeunit: TimeUnit) -> DaftResult<i64> {
@@ -39,9 +39,11 @@ fn process_interval(interval: &str, timeunit: TimeUnit) -> DaftResult<i64> {
         "millisecond" | "milliseconds" => Duration::milliseconds(count),
         "microsecond" | "microseconds" => Duration::microseconds(count),
         "nanosecond" | "nanoseconds" => Duration::nanoseconds(count),
-        _ => return Err(DaftError::ValueError(format!(
-            "Invalid interval unit: {unit}. Expected one of: week, day, hour, minute, second, millisecond, microsecond, nanosecond"
-        ))),
+        _ => {
+            return Err(DaftError::ValueError(format!(
+                "Invalid interval unit: {unit}. Expected one of: week, day, hour, minute, second, millisecond, microsecond, nanosecond"
+            )));
+        }
     };
 
     match timeunit {
@@ -213,7 +215,9 @@ impl TimestampArray {
             timeunit_for_cast,
             TimeUnit::Microseconds | TimeUnit::Nanoseconds
         ) {
-            return Err(DaftError::ValueError(format!("Only microseconds and nanoseconds time units are supported for the Time dtype, but got {timeunit_for_cast}")));
+            return Err(DaftError::ValueError(format!(
+                "Only microseconds and nanoseconds time units are supported for the Time dtype, but got {timeunit_for_cast}"
+            )));
         }
         let time_arrow = match tz {
             Some(tz) => {

@@ -5,7 +5,7 @@ use daft_core::python::PyDataType;
 use daft_dsl::python::PyExpr;
 use daft_logical_plan::{LogicalPlan, LogicalPlanBuilder, PyLogicalPlanBuilder};
 use daft_session::python::PySession;
-use pyo3::{prelude::*, types::PyDict, IntoPyObjectExt};
+use pyo3::{IntoPyObjectExt, prelude::*, types::PyDict};
 
 use crate::{exec::execute_statement, functions::SQL_FUNCTIONS, schema::try_parse_dtype};
 

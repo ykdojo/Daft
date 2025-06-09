@@ -95,7 +95,7 @@
 use std::{
     collections::VecDeque,
     hash::{BuildHasher, Hasher},
-    simd::{cmp::SimdOrd, Simd},
+    simd::{Simd, cmp::SimdOrd},
 };
 
 use common_error::DaftResult;

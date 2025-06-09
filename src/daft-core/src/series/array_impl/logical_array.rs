@@ -151,7 +151,7 @@ macro_rules! impl_series_like_for_logical_array {
             }
 
             fn agg_list(&self, groups: Option<&GroupIndices>) -> DaftResult<Series> {
-                use crate::array::{ops::DaftListAggable, ListArray};
+                use crate::array::{ListArray, ops::DaftListAggable};
                 let data_array = match groups {
                     Some(groups) => self.0.physical.grouped_list(groups)?,
                     None => self.0.physical.list()?,
@@ -167,7 +167,7 @@ macro_rules! impl_series_like_for_logical_array {
             }
 
             fn agg_set(&self, groups: Option<&GroupIndices>) -> DaftResult<Series> {
-                use crate::array::{ops::DaftSetAggable, ListArray};
+                use crate::array::{ListArray, ops::DaftSetAggable};
                 let data_array = match groups {
                     Some(groups) => self.0.physical.clone().into_series().grouped_set(groups)?,
                     None => self.0.physical.clone().into_series().set()?,

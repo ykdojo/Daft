@@ -2,10 +2,10 @@ use std::sync::Arc;
 
 use common_daft_config::DaftExecutionConfig;
 use common_display::{
+    DisplayLevel,
     ascii::fmt_tree_gitstyle,
     mermaid::{MermaidDisplayVisitor, SubgraphOptions},
     tree::TreeDisplay,
-    DisplayLevel,
 };
 use common_error::{DaftError, DaftResult};
 use common_file_formats::FileFormat;
@@ -17,10 +17,10 @@ use daft_local_plan::{
     Project, Sample, Sort, TopN, UnGroupedAggregate, Unpivot, WindowOrderByOnly,
     WindowPartitionAndDynamicFrame, WindowPartitionAndOrderBy, WindowPartitionOnly,
 };
-use daft_logical_plan::{stats::StatsState, JoinType};
+use daft_logical_plan::{JoinType, stats::StatsState};
 use daft_micropartition::{
-    partitioning::{MicroPartitionSet, PartitionSetCache},
     MicroPartition, MicroPartitionRef,
+    partitioning::{MicroPartitionSet, PartitionSetCache},
 };
 use daft_scan::ScanTaskRef;
 use daft_writers::make_physical_writer_factory;
@@ -28,6 +28,7 @@ use indexmap::IndexSet;
 use snafu::ResultExt;
 
 use crate::{
+    ExecutionRuntimeContext, PipelineCreationSnafu,
     channel::Receiver,
     intermediate_ops::{
         actor_pool_project::ActorPoolProjectOperator, cross_join::CrossJoinOperator,
@@ -58,7 +59,6 @@ use crate::{
     },
     sources::{empty_scan::EmptyScanSource, in_memory::InMemorySource, source::SourceNode},
     state_bridge::BroadcastStateBridge,
-    ExecutionRuntimeContext, PipelineCreationSnafu,
 };
 
 pub(crate) trait PipelineNode: Sync + Send + TreeDisplay {

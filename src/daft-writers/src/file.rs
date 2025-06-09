@@ -215,7 +215,7 @@ impl WriterFactory for TargetFileSizeWriterFactory {
 mod tests {
 
     use super::*;
-    use crate::test::{make_dummy_mp, DummyWriterFactory};
+    use crate::test::{DummyWriterFactory, make_dummy_mp};
 
     #[tokio::test]
     async fn test_target_file_writer_exact_file() {

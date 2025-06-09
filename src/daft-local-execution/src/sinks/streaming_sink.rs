@@ -8,16 +8,16 @@ use daft_micropartition::MicroPartition;
 use tracing::{info_span, instrument};
 
 use crate::{
+    ExecutionRuntimeContext, ExecutionTaskSpawner, OperatorOutput, TaskSet,
     channel::{
-        create_channel, create_ordering_aware_receiver_channel, OrderingAwareReceiver, Receiver,
-        Sender,
+        OrderingAwareReceiver, Receiver, Sender, create_channel,
+        create_ordering_aware_receiver_channel,
     },
     dispatcher::DispatchSpawner,
     pipeline::{NodeInfo, PipelineNode, TranslationContext},
     progress_bar::ProgressBarColor,
     resource_manager::MemoryManager,
     runtime_stats::{CountingReceiver, CountingSender, RuntimeStatsContext},
-    ExecutionRuntimeContext, ExecutionTaskSpawner, OperatorOutput, TaskSet,
 };
 
 pub trait StreamingSinkState: Send + Sync {

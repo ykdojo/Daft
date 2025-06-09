@@ -107,7 +107,7 @@ crate-type = ["cdylib"]
 name = "daft"
 
 [package]
-edition = "2021"
+edition = "2024"
 name = "daft"
 publish = false
 version = "0.3.0-dev0"
@@ -413,5 +413,5 @@ wildcard_imports = "allow"
 zero_sized_map_values = "allow"
 
 [workspace.package]
-edition = "2021"
+edition = "2024"
 version = "0.3.0-dev0"

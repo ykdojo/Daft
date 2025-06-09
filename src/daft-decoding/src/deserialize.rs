@@ -248,8 +248,8 @@ pub fn deserialize_column<B: ByteRecordGeneric>(
     _line_number: usize,
 ) -> Result<Box<dyn Array>> {
     use DataType::{
-        Binary, Boolean, Date32, Date64, Decimal, Float32, Float64, Int16, Int32, Int64, Int8,
-        LargeBinary, LargeUtf8, Null, Time32, Time64, Timestamp, UInt16, UInt32, UInt64, UInt8,
+        Binary, Boolean, Date32, Date64, Decimal, Float32, Float64, Int8, Int16, Int32, Int64,
+        LargeBinary, LargeUtf8, Null, Time32, Time64, Timestamp, UInt8, UInt16, UInt32, UInt64,
         Utf8,
     };
     Ok(match datatype {
@@ -365,7 +365,7 @@ pub fn deserialize_column<B: ByteRecordGeneric>(
         other => {
             return Err(Error::NotYetImplemented(format!(
                 "Deserializing type \"{other:?}\" is not implemented"
-            )))
+            )));
         }
     })
 }

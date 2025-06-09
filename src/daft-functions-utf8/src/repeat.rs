@@ -1,4 +1,4 @@
-use common_error::{ensure, DaftError, DaftResult};
+use common_error::{DaftError, DaftResult, ensure};
 use daft_core::{
     array::DataArray,
     prelude::{
@@ -8,8 +8,8 @@ use daft_core::{
     with_match_integer_daft_types,
 };
 use daft_dsl::{
-    functions::{FunctionArgs, ScalarFunction, ScalarUDF},
     ExprRef,
+    functions::{FunctionArgs, ScalarFunction, ScalarUDF},
 };
 use num_traits::NumCast;
 use serde::{Deserialize, Serialize};

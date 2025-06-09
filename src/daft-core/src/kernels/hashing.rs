@@ -194,7 +194,7 @@ pub fn hash(array: &dyn Array, seed: Option<&PrimitiveArray<u64>>) -> Result<Pri
         t => {
             return Err(Error::NotYetImplemented(format!(
                 "Hash not implemented for type {t:?}"
-            )))
+            )));
         }
     })
 }

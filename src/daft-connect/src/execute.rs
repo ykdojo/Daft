@@ -4,32 +4,32 @@ use common_error::{DaftError, DaftResult};
 use common_file_formats::{FileFormat, WriteMode};
 use daft_catalog::TableSource;
 use daft_context::get_context;
-use daft_dsl::{literals_to_series, LiteralValue};
+use daft_dsl::{LiteralValue, literals_to_series};
 use daft_logical_plan::LogicalPlanBuilder;
 use daft_micropartition::MicroPartition;
 use daft_recordbatch::RecordBatch;
 use futures::{
-    stream::{self, BoxStream},
     StreamExt, TryStreamExt,
+    stream::{self, BoxStream},
 };
 use pyo3::Python;
 use spark_connect::{
-    relation::RelType,
-    write_operation::{SaveMode, SaveType},
     CreateDataFrameViewCommand, ExecutePlanResponse, Relation, ShowString, SqlCommand,
     WriteOperation,
+    relation::RelType,
+    write_operation::{SaveMode, SaveType},
 };
-use tonic::{codegen::tokio_stream::wrappers::ReceiverStream, Status};
+use tonic::{Status, codegen::tokio_stream::wrappers::ReceiverStream};
 use tracing::debug;
 
 use crate::{
+    ExecuteStream,
     error::{ConnectError, ConnectResult, Context},
     not_yet_implemented,
     response_builder::ResponseBuilder,
     session::ConnectSession,
     spark_analyzer::SparkAnalyzer,
     util::FromOptionalField,
-    ExecuteStream,
 };
 
 impl ConnectSession {

@@ -1,10 +1,10 @@
-use proc_macro2::{Ident, TokenStream};
-use proc_macro_crate::{crate_name, FoundCrate};
+use proc_macro_crate::{FoundCrate, crate_name};
 use proc_macro_error::{abort, abort_call_site, emit_error};
+use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 use syn::{
-    parse_macro_input, spanned::Spanned, Data, DeriveInput, Fields, FieldsNamed, GenericArgument,
-    GenericParam, Generics, LitStr, PathArguments, Type, TypePath,
+    Data, DeriveInput, Fields, FieldsNamed, GenericArgument, GenericParam, Generics, LitStr,
+    PathArguments, Type, TypePath, parse_macro_input, spanned::Spanned,
 };
 
 enum ArgCardinality {

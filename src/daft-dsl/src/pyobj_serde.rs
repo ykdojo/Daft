@@ -5,7 +5,7 @@ use std::{
 };
 
 use common_py_serde::{deserialize_py_object, serialize_py_object};
-use pyo3::{types::PyAnyMethods, PyObject, Python};
+use pyo3::{PyObject, Python, types::PyAnyMethods};
 use serde::{Deserialize, Serialize};
 
 // This is a Rust wrapper on top of a Python UDF to make it serde-able and hashable

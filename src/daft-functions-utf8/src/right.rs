@@ -8,8 +8,8 @@ use daft_core::{
     with_match_integer_daft_types,
 };
 use daft_dsl::{
-    functions::{FunctionArgs, ScalarFunction, ScalarUDF},
     ExprRef,
+    functions::{FunctionArgs, ScalarFunction, ScalarUDF},
 };
 use num_traits::NumCast;
 use serde::{Deserialize, Serialize};

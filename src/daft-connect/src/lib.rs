@@ -1,5 +1,4 @@
 #![feature(iterator_try_collect)]
-#![feature(let_chains)]
 #![feature(try_trait_v2)]
 #![feature(coroutines)]
 #![feature(iter_from_coroutine)]

@@ -665,7 +665,7 @@ impl DataType {
                 return Err(DaftError::TypeError(format!(
                     "Expected input to be numeric, instead got {}",
                     self,
-                )))
+                )));
             }
         };
         Ok(data_type)

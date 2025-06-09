@@ -5,7 +5,7 @@ use arrow2::{
     datatypes::Field,
     io::csv::{
         read_async,
-        read_async::{read_rows, AsyncReaderBuilder},
+        read_async::{AsyncReaderBuilder, read_rows},
     },
 };
 use async_compat::{Compat, CompatExt};
@@ -16,16 +16,16 @@ use daft_compression::CompressionCodec;
 use daft_core::{prelude::*, utils::arrow::cast_array_for_daft_if_needed};
 use daft_decoding::deserialize::deserialize_column;
 use daft_dsl::{expr::bound_expr::BoundExpr, optimization::get_required_columns};
-use daft_io::{parse_url, GetResult, IOClient, IOStatsRef, SourceType};
+use daft_io::{GetResult, IOClient, IOStatsRef, SourceType, parse_url};
 use daft_recordbatch::RecordBatch;
-use futures::{stream::BoxStream, Stream, StreamExt, TryStreamExt};
+use futures::{Stream, StreamExt, TryStreamExt, stream::BoxStream};
 use rayon::{
     iter::{IndexedParallelIterator, IntoParallelIterator},
     prelude::{IntoParallelRefIterator, ParallelIterator},
 };
 use snafu::{
-    futures::{try_future::Context, TryFutureExt},
     ResultExt,
+    futures::{TryFutureExt, try_future::Context},
 };
 use tokio::{
     fs::File,
@@ -35,8 +35,8 @@ use tokio::{
 use tokio_util::io::StreamReader;
 
 use crate::{
-    metadata::read_csv_schema_single, ArrowSnafu, CsvConvertOptions, CsvParseOptions,
-    CsvReadOptions,
+    ArrowSnafu, CsvConvertOptions, CsvParseOptions, CsvReadOptions,
+    metadata::read_csv_schema_single,
 };
 
 trait ByteRecordChunkStream: Stream<Item = super::Result<Vec<read_async::ByteRecord>>> {}
@@ -385,7 +385,7 @@ pub async fn stream_csv_single(
     io_client: Arc<IOClient>,
     io_stats: Option<IOStatsRef>,
     max_chunks_in_flight: Option<usize>,
-) -> DaftResult<impl Stream<Item = DaftResult<RecordBatch>> + Send> {
+) -> DaftResult<impl Stream<Item = DaftResult<RecordBatch>> + Send + use<>> {
     let predicate = convert_options
         .as_ref()
         .and_then(|opts| opts.predicate.clone());
@@ -483,7 +483,7 @@ async fn read_csv_single_into_stream(
     read_options: Option<CsvReadOptions>,
     io_client: Arc<IOClient>,
     io_stats: Option<IOStatsRef>,
-) -> DaftResult<(impl TableStream + Send, Vec<Field>)> {
+) -> DaftResult<(impl TableStream + Send + use<>, Vec<Field>)> {
     let (mut schema, estimated_mean_row_size, estimated_std_row_size) =
         if let Some(schema) = convert_options.schema {
             (schema.to_arrow()?, None, None)
@@ -724,8 +724,8 @@ mod tests {
     use std::sync::Arc;
 
     use arrow2::io::csv::read::{
-        deserialize_batch, deserialize_column, infer, infer_schema, read_rows, ByteRecord,
-        ReaderBuilder,
+        ByteRecord, ReaderBuilder, deserialize_batch, deserialize_column, infer, infer_schema,
+        read_rows,
     };
     use common_error::{DaftError, DaftResult};
     use daft_core::{
@@ -737,7 +737,7 @@ mod tests {
     use rstest::rstest;
 
     use super::read_csv;
-    use crate::{char_to_byte, CsvConvertOptions, CsvParseOptions, CsvReadOptions};
+    use crate::{CsvConvertOptions, CsvParseOptions, CsvReadOptions, char_to_byte};
 
     #[allow(clippy::too_many_arguments)]
     fn check_equal_local_arrow2(

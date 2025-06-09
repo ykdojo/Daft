@@ -5,7 +5,7 @@ use common_error::DaftResult;
 use common_partitioning::PartitionRef;
 use daft_dsl::ExprRef;
 use daft_logical_plan::{
-    partitioning::ClusteringSpecRef, stats::ApproxStats, JoinType, LogicalPlanRef,
+    JoinType, LogicalPlanRef, partitioning::ClusteringSpecRef, stats::ApproxStats,
 };
 use daft_schema::schema::SchemaRef;
 use futures::Stream;
@@ -14,8 +14,8 @@ use stage_builder::StagePlanBuilder;
 
 use crate::{
     pipeline_node::{
-        logical_plan_to_pipeline_node, materialize::materialize_all_pipeline_outputs,
-        MaterializedOutput, PipelineOutput, RunningPipelineNode,
+        MaterializedOutput, PipelineOutput, RunningPipelineNode, logical_plan_to_pipeline_node,
+        materialize::materialize_all_pipeline_outputs,
     },
     scheduling::{scheduler::SchedulerHandle, task::SwordfishTask},
     utils::{joinset::JoinSet, stream::JoinableForwardingStream},

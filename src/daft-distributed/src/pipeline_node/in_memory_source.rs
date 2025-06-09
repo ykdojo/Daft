@@ -5,13 +5,13 @@ use common_error::DaftResult;
 use common_partitioning::PartitionRef;
 use common_treenode::{Transformed, TreeNode};
 use daft_local_plan::{LocalPhysicalPlan, LocalPhysicalPlanRef};
-use daft_logical_plan::{stats::StatsState, InMemoryInfo};
+use daft_logical_plan::{InMemoryInfo, stats::StatsState};
 
 use super::{DistributedPipelineNode, PipelineOutput, RunningPipelineNode};
 use crate::{
     scheduling::task::{SchedulingStrategy, SwordfishTask},
     stage::StageContext,
-    utils::channel::{create_channel, Sender},
+    utils::channel::{Sender, create_channel},
 };
 
 #[allow(dead_code)]

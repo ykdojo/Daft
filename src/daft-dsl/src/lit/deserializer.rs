@@ -4,8 +4,9 @@ use common_error::DaftError;
 use daft_core::{prelude::Field, series::Series};
 use indexmap::IndexMap;
 use serde::{
+    Deserializer,
     de::{self, Error},
-    forward_to_deserialize_any, Deserializer,
+    forward_to_deserialize_any,
 };
 
 use super::LiteralValue;

@@ -70,15 +70,15 @@ pub mod pylib {
 
     use common_daft_config::PyDaftExecutionConfig;
     use common_error::DaftResult;
-    use common_file_formats::{python::PyFileFormatConfig, FileFormatConfig};
+    use common_file_formats::{FileFormatConfig, python::PyFileFormatConfig};
     use common_py_serde::impl_bincode_py_state_serialization;
     use common_scan_info::{
-        python::pylib::{PyPartitionField, PyPushdowns},
         PartitionField, Pushdowns, ScanOperator, ScanOperatorRef, ScanTaskLike, ScanTaskLikeRef,
+        python::pylib::{PyPartitionField, PyPushdowns},
     };
     use daft_dsl::expr::bound_expr::BoundExpr;
     use daft_logical_plan::{LogicalPlanBuilder, PyLogicalPlanBuilder};
-    use daft_recordbatch::{python::PyRecordBatch, RecordBatch};
+    use daft_recordbatch::{RecordBatch, python::PyRecordBatch};
     use daft_schema::{python::schema::PySchema, schema::SchemaRef};
     use daft_stats::{PartitionSpec, TableMetadata, TableStatistics};
     use pyo3::{prelude::*, pyclass, types::PyIterator};
@@ -86,8 +86,8 @@ pub mod pylib {
 
     use super::PythonTablesFactoryArgs;
     use crate::{
-        anonymous::AnonymousScanOperator, glob::GlobScanOperator, storage_config::StorageConfig,
-        DataSource, ScanTask,
+        DataSource, ScanTask, anonymous::AnonymousScanOperator, glob::GlobScanOperator,
+        storage_config::StorageConfig,
     };
     #[pyclass(module = "daft.daft", frozen)]
     #[derive(Debug, Clone)]
@@ -373,7 +373,7 @@ pub mod pylib {
             stats: Option<PyRecordBatch>,
         ) -> PyResult<Option<Self>> {
             if let Some(ref pvalues) = partition_values
-                && let Some(Some(ref partition_filters)) =
+                && let Some(Some(partition_filters)) =
                     pushdowns.as_ref().map(|p| &p.0.partition_filters)
             {
                 let table = &pvalues.record_batch;

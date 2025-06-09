@@ -2,7 +2,7 @@ use std::{collections::HashMap, fmt::Write};
 
 use common_error::{DaftError, DaftResult};
 use common_treenode::TreeNodeVisitor;
-use daft_dsl::{resolved_col, Literal};
+use daft_dsl::{Literal, resolved_col};
 use serde_json::json;
 
 use crate::{LogicalPlan, LogicalPlanRef};
@@ -188,8 +188,8 @@ mod tests {
     use daft_functions_utf8::{endswith, startswith};
 
     use crate::{
-        display::test::{plan_1, plan_2},
         LogicalPlanBuilder,
+        display::test::{plan_1, plan_2},
     };
 
     #[test]

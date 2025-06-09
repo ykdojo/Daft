@@ -7,19 +7,19 @@ mod utils;
 use std::{ops::Sub, sync::Arc};
 
 pub use array_impl::IntoSeries;
-use common_display::table_display::{make_comfy_table, StrValue};
+use common_display::table_display::{StrValue, make_comfy_table};
 use common_error::DaftResult;
 use derive_more::Display;
-use indexmap::{map::RawEntryApiV1, IndexMap};
+use indexmap::{IndexMap, map::RawEntryApiV1};
 pub use ops::cast_series_to_supertype;
 
 pub(crate) use self::series_like::SeriesLike;
 use crate::{
     array::{
-        ops::{
-            arrow2::comparison::build_is_equal, from_arrow::FromArrow, full::FullNull, DaftCompare,
-        },
         DataArray,
+        ops::{
+            DaftCompare, arrow2::comparison::build_is_equal, from_arrow::FromArrow, full::FullNull,
+        },
     },
     datatypes::{DaftDataType, DaftNumericType, DataType, Field, FieldRef, NumericNative},
     prelude::AsArrow,

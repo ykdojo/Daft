@@ -3,12 +3,12 @@ use std::sync::Arc;
 use common_error::{DaftError, DaftResult};
 use daft_core::prelude::*;
 use daft_dsl::{
-    expr::bound_expr::{BoundExpr, BoundWindowExpr},
     WindowExpr,
+    expr::bound_expr::{BoundExpr, BoundWindowExpr},
 };
 use daft_micropartition::MicroPartition;
 use itertools::Itertools;
-use tracing::{instrument, Span};
+use tracing::{Span, instrument};
 
 use super::blocking_sink::{
     BlockingSink, BlockingSinkFinalizeResult, BlockingSinkSinkResult, BlockingSinkState,

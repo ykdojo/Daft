@@ -9,8 +9,8 @@ use super::streaming_sink::{
     StreamingSinkState,
 };
 use crate::{
-    dispatcher::{DispatchSpawner, RoundRobinDispatcher, UnorderedDispatcher},
     ExecutionRuntimeContext, ExecutionTaskSpawner,
+    dispatcher::{DispatchSpawner, RoundRobinDispatcher, UnorderedDispatcher},
 };
 
 struct ConcatSinkState {}

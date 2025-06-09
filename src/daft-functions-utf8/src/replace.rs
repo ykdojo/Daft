@@ -1,13 +1,13 @@
 use std::sync::Arc;
 
-use common_error::{ensure, DaftError, DaftResult};
+use common_error::{DaftError, DaftResult, ensure};
 use daft_core::{
     prelude::{AsArrow, DataType, Field, FullNull, Schema, Utf8Array},
     series::{IntoSeries, Series},
 };
 use daft_dsl::{
-    functions::{FunctionArg, FunctionArgs, ScalarFunction, ScalarUDF},
     ExprRef,
+    functions::{FunctionArg, FunctionArgs, ScalarFunction, ScalarUDF},
 };
 use serde::{Deserialize, Serialize};
 

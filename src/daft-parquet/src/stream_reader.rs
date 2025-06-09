@@ -2,12 +2,12 @@ use std::{cmp::max, collections::HashSet, fs::File, sync::Arc};
 
 use arrow2::{bitmap::Bitmap, io::parquet::read};
 use common_error::DaftResult;
-use common_runtime::{combine_stream, get_compute_runtime, RuntimeTask};
+use common_runtime::{RuntimeTask, combine_stream, get_compute_runtime};
 use daft_core::{prelude::*, utils::arrow::cast_array_for_daft_if_needed};
-use daft_dsl::{expr::bound_expr::BoundExpr, ExprRef};
+use daft_dsl::{ExprRef, expr::bound_expr::BoundExpr};
 use daft_io::{CountingReader, IOStatsRef};
 use daft_recordbatch::RecordBatch;
-use futures::{stream::BoxStream, FutureExt, StreamExt};
+use futures::{FutureExt, StreamExt, stream::BoxStream};
 use itertools::Itertools;
 use rayon::{
     iter::ParallelIterator,
@@ -17,11 +17,10 @@ use snafu::ResultExt;
 use tokio_stream::wrappers::ReceiverStream;
 
 use crate::{
-    determine_parquet_parallelism,
-    file::{build_row_ranges, RowGroupRange},
+    PARQUET_MORSEL_SIZE, determine_parquet_parallelism,
+    file::{RowGroupRange, build_row_ranges},
     read::{ArrowChunk, ArrowChunkIters, ParquetSchemaInferenceOptions},
     stream_reader::read::schema::infer_schema_with_options,
-    PARQUET_MORSEL_SIZE,
 };
 
 fn prune_fields_from_schema(
@@ -238,7 +237,7 @@ pub fn local_parquet_read_into_column_iters(
     Arc<parquet2::metadata::FileMetaData>,
     SchemaRef,
     Vec<RowGroupRange>,
-    impl Iterator<Item = super::Result<ArrowChunkIters>>,
+    impl Iterator<Item = super::Result<ArrowChunkIters>> + use<>,
 )> {
     const LOCAL_PROTOCOL: &str = "file://";
     let uri = uri

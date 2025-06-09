@@ -7,7 +7,7 @@ use arrow2::array::Array;
 use common_error::DaftResult;
 use fnv::FnvHashMap;
 
-use super::{as_arrow::AsArrow, IntoGroups};
+use super::{IntoGroups, as_arrow::AsArrow};
 use crate::{
     array::{DataArray, FixedSizeListArray, ListArray, StructArray},
     datatypes::{

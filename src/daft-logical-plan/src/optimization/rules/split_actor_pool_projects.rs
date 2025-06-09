@@ -3,16 +3,16 @@ use std::{collections::HashSet, iter, sync::Arc};
 use common_error::DaftResult;
 use common_treenode::{Transformed, TreeNode, TreeNodeRecursion, TreeNodeRewriter};
 use daft_dsl::{
-    is_actor_pool_udf,
+    Column, Expr, ExprRef, ResolvedColumn, is_actor_pool_udf,
     optimization::{get_required_columns, requires_computation},
-    resolved_col, Column, Expr, ExprRef, ResolvedColumn,
+    resolved_col,
 };
 use itertools::Itertools;
 
 use super::OptimizerRule;
 use crate::{
-    ops::{ActorPoolProject, Project},
     LogicalPlan,
+    ops::{ActorPoolProject, Project},
 };
 
 #[derive(Default, Debug)]
@@ -505,16 +505,18 @@ mod tests {
     use common_resource_request::ResourceRequest;
     use daft_core::prelude::*;
     use daft_dsl::{
+        Expr, ExprRef,
         functions::{
-            python::{MaybeInitializedUDF, PythonUDF, RuntimePyObject},
             FunctionExpr,
+            python::{MaybeInitializedUDF, PythonUDF, RuntimePyObject},
         },
-        resolved_col, Expr, ExprRef,
+        resolved_col,
     };
     use test_log::test;
 
     use super::SplitActorPoolProjects;
     use crate::{
+        LogicalPlan,
         ops::{ActorPoolProject, Project},
         optimization::{
             optimizer::{RuleBatch, RuleExecutionStrategy},
@@ -522,7 +524,6 @@ mod tests {
             test::assert_optimized_plan_with_rules_eq,
         },
         test::{dummy_scan_node, dummy_scan_operator},
-        LogicalPlan,
     };
 
     /// Helper that creates an optimizer with the SplitExprByActorPoolUDF rule registered, optimizes
@@ -940,11 +941,13 @@ mod tests {
         .arced();
         let expected = LogicalPlan::ActorPoolProject(ActorPoolProject::try_new(
             expected,
-            vec![create_actor_pool_udf(vec![
-                resolved_col(intermediate_name_0),
-                resolved_col(intermediate_name_1),
-            ])
-            .alias("c")],
+            vec![
+                create_actor_pool_udf(vec![
+                    resolved_col(intermediate_name_0),
+                    resolved_col(intermediate_name_1),
+                ])
+                .alias("c"),
+            ],
         )?)
         .arced();
         assert_optimized_plan_eq_with_projection_pushdown(project_plan, expected)?;
@@ -958,9 +961,10 @@ mod tests {
             Field::new("b", DataType::Int64),
         ]);
         let scan_plan = dummy_scan_node(scan_op);
-        let stacked_actor_pool_project_expr =
-            create_actor_pool_udf(vec![create_actor_pool_udf(vec![resolved_col("a")])
-                .add(create_actor_pool_udf(vec![resolved_col("b")]))]);
+        let stacked_actor_pool_project_expr = create_actor_pool_udf(vec![
+            create_actor_pool_udf(vec![resolved_col("a")])
+                .add(create_actor_pool_udf(vec![resolved_col("b")])),
+        ]);
 
         // Add a Projection with actor pool UDF and resource request
         // Project([foo(foo(col("a")) + foo(col("b"))).alias("c")])
@@ -1054,9 +1058,11 @@ mod tests {
         .arced();
         let expected = LogicalPlan::Project(Project::try_new(
             expected,
-            vec![resolved_col(intermediate_name_0)
-                .add(resolved_col(intermediate_name_1))
-                .alias(intermediate_name_2)],
+            vec![
+                resolved_col(intermediate_name_0)
+                    .add(resolved_col(intermediate_name_1))
+                    .alias(intermediate_name_2),
+            ],
         )?)
         .arced();
         let expected = LogicalPlan::ActorPoolProject(ActorPoolProject::try_new(
@@ -1073,7 +1079,7 @@ mod tests {
         let scan_op = dummy_scan_operator(vec![Field::new("a", DataType::Int64)]);
         let scan_plan = dummy_scan_node(scan_op);
         let stacked_actor_pool_project_expr = create_actor_pool_udf(vec![
-            resolved_col("a").add(create_actor_pool_udf(vec![resolved_col("a")]))
+            resolved_col("a").add(create_actor_pool_udf(vec![resolved_col("a")])),
         ]);
 
         // Add a Projection with actor pool UDF and resource request

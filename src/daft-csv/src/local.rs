@@ -14,7 +14,7 @@ use daft_core::{
     utils::arrow::cast_array_for_daft_if_needed,
 };
 use daft_decoding::deserialize::deserialize_column;
-use daft_dsl::{expr::bound_expr::BoundExpr, optimization::get_required_columns, Expr};
+use daft_dsl::{Expr, expr::bound_expr::BoundExpr, optimization::get_required_columns};
 use daft_io::{IOClient, IOStatsRef};
 use daft_recordbatch::RecordBatch;
 use futures::{Stream, StreamExt, TryStreamExt};
@@ -26,9 +26,9 @@ use smallvec::SmallVec;
 use snafu::ResultExt;
 
 use crate::{
+    ArrowSnafu, CsvConvertOptions, CsvParseOptions, CsvReadOptions, JoinSnafu,
     metadata::read_csv_schema_single,
     read::{fields_to_projection_indices, tables_concat},
-    ArrowSnafu, CsvConvertOptions, CsvParseOptions, CsvReadOptions, JoinSnafu,
 };
 
 mod pool;
@@ -200,7 +200,7 @@ pub async fn stream_csv_local(
     io_client: Arc<IOClient>,
     io_stats: Option<IOStatsRef>,
     max_chunks_in_flight: Option<usize>,
-) -> DaftResult<impl Stream<Item = DaftResult<RecordBatch>> + Send> {
+) -> DaftResult<impl Stream<Item = DaftResult<RecordBatch>> + Send + use<>> {
     let uri = uri.trim_start_matches("file://");
     let file = std::fs::File::open(uri)?;
 

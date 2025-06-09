@@ -1,5 +1,3 @@
-#![feature(let_chains)]
-
 mod buffer;
 mod channel;
 mod dispatcher;
@@ -26,7 +24,7 @@ use progress_bar::{OperatorProgressBar, ProgressBarColor, ProgressBarManager};
 use resource_manager::MemoryManager;
 pub use run::{ExecutionEngineResult, NativeExecutor};
 use runtime_stats::{RuntimeStatsContext, TimedFuture};
-use snafu::{futures::TryFutureExt, ResultExt, Snafu};
+use snafu::{ResultExt, Snafu, futures::TryFutureExt};
 use tracing::Instrument;
 
 /// The `OperatorOutput` enum represents the output of an operator.

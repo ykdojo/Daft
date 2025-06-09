@@ -1,6 +1,6 @@
 use common_error::{DaftError, DaftResult};
 use daft_core::{datatypes::NumericNative, prelude::*};
-use daft_dsl::functions::{prelude::*, ScalarFunction};
+use daft_dsl::functions::{ScalarFunction, prelude::*};
 use serde::{Deserialize, Serialize};
 
 #[derive(FunctionArgs)]

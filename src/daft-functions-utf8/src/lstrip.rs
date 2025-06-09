@@ -4,12 +4,12 @@ use daft_core::{
     series::{IntoSeries, Series},
 };
 use daft_dsl::{
-    functions::{FunctionArgs, ScalarFunction, ScalarUDF},
     ExprRef,
+    functions::{FunctionArgs, ScalarFunction, ScalarUDF},
 };
 use serde::{Deserialize, Serialize};
 
-use crate::utils::{unary_utf8_evaluate, unary_utf8_to_field, Utf8ArrayUtils};
+use crate::utils::{Utf8ArrayUtils, unary_utf8_evaluate, unary_utf8_to_field};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct LStrip;

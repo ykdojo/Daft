@@ -201,7 +201,7 @@ impl RangesContainer {
     pub async fn get_range_reader(
         &self,
         range: Range<usize>,
-    ) -> DaftResult<impl futures::AsyncRead> {
+    ) -> DaftResult<impl futures::AsyncRead + use<>> {
         let mut current_pos = range.start;
         let mut curr_index;
         let start_point = self.ranges.binary_search_by_key(&current_pos, |e| e.start);
@@ -234,7 +234,10 @@ impl RangesContainer {
                 let start = entry.start;
                 let end = entry.end;
                 let len = end - start;
-                assert!(current_pos >= start && current_pos < end, "range: {range:?}, current_pos: {current_pos}, bytes_start: {start}, end: {end}");
+                assert!(
+                    current_pos >= start && current_pos < end,
+                    "range: {range:?}, current_pos: {current_pos}, bytes_start: {start}, end: {end}"
+                );
                 let start_offset = current_pos - start;
                 let end_offset = len.min(range.end - start);
                 needed_entries.push(entry);

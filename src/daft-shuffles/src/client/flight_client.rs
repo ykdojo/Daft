@@ -4,7 +4,7 @@ use std::{
     task::{Context, Poll},
 };
 
-use arrow_flight::{client::FlightClient, decode::FlightRecordBatchStream, Ticket};
+use arrow_flight::{Ticket, client::FlightClient, decode::FlightRecordBatchStream};
 use common_error::{DaftError, DaftResult};
 use daft_core::{prelude::SchemaRef, series::Series};
 use daft_recordbatch::RecordBatch;

@@ -20,8 +20,8 @@ use common_hashable_float_wrapper::FloatWrapper;
 use common_treenode::{Transformed, TreeNode};
 use daft_core::{
     datatypes::{
-        try_mean_aggregation_supertype, try_skew_aggregation_supertype,
-        try_stddev_aggregation_supertype, try_sum_supertype, InferDataType,
+        InferDataType, try_mean_aggregation_supertype, try_skew_aggregation_supertype,
+        try_stddev_aggregation_supertype, try_sum_supertype,
     },
     join::JoinSide,
     prelude::*,
@@ -33,12 +33,12 @@ use serde::{Deserialize, Serialize};
 use super::functions::FunctionExpr;
 use crate::{
     functions::{
+        FunctionArg, FunctionArgs, FunctionEvaluator, ScalarFunction,
         function_display_without_formatter, function_semantic_id,
         python::PythonUDF,
         scalar::scalar_function_semantic_id,
         sketch::{HashableVecPercentiles, SketchExpr},
         struct_::StructExpr,
-        FunctionArg, FunctionArgs, FunctionEvaluator, ScalarFunction,
     },
     lit,
     optimization::{get_required_columns, requires_computation},
@@ -630,16 +630,21 @@ impl AggExpr {
                 Ok(Field::new(
                     field.name.as_str(),
                     match &field.dtype {
-                        dt if dt.is_numeric() => if percentiles.len() > 1 || *force_list_output {
-                            DataType::FixedSizeList(Box::new(DataType::Float64), percentiles.len())
-                        } else {
-                            DataType::Float64
-                        },
+                        dt if dt.is_numeric() => {
+                            if percentiles.len() > 1 || *force_list_output {
+                                DataType::FixedSizeList(
+                                    Box::new(DataType::Float64),
+                                    percentiles.len(),
+                                )
+                            } else {
+                                DataType::Float64
+                            }
+                        }
                         other => {
                             return Err(DaftError::TypeError(format!(
                                 "Expected input to approx_percentiles() to be numeric but received dtype {} for column \"{}\"",
                                 other, field.name,
-                            )))
+                            )));
                         }
                     },
                 ))
@@ -1250,7 +1255,9 @@ impl Expr {
                     String::new()
                 };
 
-                FieldID::new(format!("{child_id}.window(partition_by=[{partition_by_ids}],order_by=[{order_by_ids}]{frame_details})"))
+                FieldID::new(format!(
+                    "{child_id}.window(partition_by=[{partition_by_ids}],order_by=[{order_by_ids}]{frame_details})"
+                ))
             }
             Self::WindowFunction(window_expr) => {
                 let child_id = window_expr.semantic_id(schema);
@@ -1460,7 +1467,7 @@ impl Expr {
                     Ok(supertype) => Ok(Field::new(expr_field.name.as_str(), supertype)),
                     Err(_) => Err(DaftError::TypeError(format!(
                         "Expected expr and fill_value arguments for fill_null to be castable to the same supertype, but received {expr_field} and {fill_value_field}",
-                    )))
+                    ))),
                 }
             }
             Self::IsIn(expr, items) => {
@@ -1592,7 +1599,9 @@ impl Expr {
                         let if_false_field = if_false.to_field(schema)?;
                         match try_get_supertype(&if_true_field.dtype, &if_false_field.dtype) {
                             Ok(supertype) => Ok(Field::new(if_true_field.name, supertype)),
-                            Err(_) => Err(DaftError::TypeError(format!("Expected if_true and if_false arguments for if_else to be castable to the same supertype, but received {if_true_field} and {if_false_field}")))
+                            Err(_) => Err(DaftError::TypeError(format!(
+                                "Expected if_true and if_false arguments for if_else to be castable to the same supertype, but received {if_true_field} and {if_false_field}"
+                            ))),
                         }
                     }
                 }
@@ -1712,7 +1721,7 @@ impl Expr {
                         _ => {
                             return Err(io::Error::other(
                                 "Unsupported operator for SQL translation",
-                            ))
+                            ));
                         }
                     };
                     write!(buffer, " {} ", op)?;
@@ -2092,11 +2101,7 @@ pub fn deduplicate_expr_names(exprs: &[ExprRef]) -> Vec<ExprRef> {
 
             names_so_far.insert(new_name.clone());
 
-            if i == 0 {
-                e.clone()
-            } else {
-                e.alias(new_name)
-            }
+            if i == 0 { e.clone() } else { e.alias(new_name) }
         })
         .collect()
 }
@@ -2118,7 +2123,10 @@ fn try_compute_is_in_type(exprs: &[ExprRef], schema: &Schema) -> DaftResult<Opti
         }
         // other != null and dtype is set -> compare or err!
         if dtype.as_ref() != Some(&other_dtype) {
-            return Err(DaftError::TypeError(format!("Expected all arguments to be of the same type {}, but found element with type {other_dtype}", dtype.unwrap())));
+            return Err(DaftError::TypeError(format!(
+                "Expected all arguments to be of the same type {}, but found element with type {other_dtype}",
+                dtype.unwrap()
+            )));
         }
     }
     Ok(dtype)

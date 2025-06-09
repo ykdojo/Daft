@@ -11,7 +11,7 @@ use super::{DistributedPipelineNode, PipelineOutput, RunningPipelineNode};
 use crate::{
     scheduling::task::{SchedulingStrategy, SwordfishTask},
     stage::StageContext,
-    utils::channel::{create_channel, Sender},
+    utils::channel::{Sender, create_channel},
 };
 
 #[allow(dead_code)]

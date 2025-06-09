@@ -2,15 +2,15 @@ use std::sync::Arc;
 
 use daft_core::prelude::SchemaRef;
 use daft_micropartition::MicroPartition;
-use tracing::{instrument, Span};
+use tracing::{Span, instrument};
 
 use super::streaming_sink::{
     StreamingSink, StreamingSinkExecuteResult, StreamingSinkFinalizeResult, StreamingSinkOutput,
     StreamingSinkState,
 };
 use crate::{
-    dispatcher::{DispatchSpawner, UnorderedDispatcher},
     ExecutionRuntimeContext, ExecutionTaskSpawner,
+    dispatcher::{DispatchSpawner, UnorderedDispatcher},
 };
 
 struct MonotonicallyIncreasingIdState {

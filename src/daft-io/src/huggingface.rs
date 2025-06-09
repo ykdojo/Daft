@@ -6,23 +6,23 @@ use std::{
 use async_trait::async_trait;
 use common_io_config::HTTPConfig;
 use futures::{
-    stream::{self, BoxStream},
     StreamExt, TryStreamExt,
+    stream::{self, BoxStream},
 };
 use reqwest_middleware::{
-    reqwest::header::{CONTENT_LENGTH, RANGE},
     ClientWithMiddleware,
+    reqwest::header::{CONTENT_LENGTH, RANGE},
 };
 use serde::{Deserialize, Serialize};
 use snafu::{IntoError, ResultExt, Snafu};
 
 use super::object_io::{GetResult, ObjectSource};
 use crate::{
+    FileFormat,
     http::HttpSource,
     object_io::{FileMetadata, FileType, LSResult},
     stats::IOStatsRef,
     stream_utils::io_stats_on_bytestream,
-    FileFormat,
 };
 
 #[derive(Debug, Snafu)]
@@ -488,8 +488,7 @@ async fn try_parquet_api(
                 .get("x-error-message")
                 .and_then(|v| v.to_str().ok())
             {
-                const PRIVATE_DATASET_ERROR: &str =
-                    "Private datasets are only supported for PRO users and Enterprise Hub organizations.";
+                const PRIVATE_DATASET_ERROR: &str = "Private datasets are only supported for PRO users and Enterprise Hub organizations.";
                 if error_message.ends_with(PRIVATE_DATASET_ERROR) {
                     return Err(Error::PrivateDataset);
                 }

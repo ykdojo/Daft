@@ -8,29 +8,29 @@ use arrow2::io::parquet::read::{column_iter_to_arrays, schema::infer_schema_with
 use common_error::DaftResult;
 use common_runtime::{combine_stream, get_io_runtime};
 use daft_core::{prelude::*, utils::arrow::cast_array_for_daft_if_needed};
-use daft_dsl::{expr::bound_expr::BoundExpr, ExprRef};
+use daft_dsl::{ExprRef, expr::bound_expr::BoundExpr};
 use daft_io::{IOClient, IOStatsRef};
 use daft_recordbatch::RecordBatch;
 use daft_stats::TruthValue;
-use futures::{future::try_join_all, stream::BoxStream, FutureExt, StreamExt};
+use futures::{FutureExt, StreamExt, future::try_join_all, stream::BoxStream};
 use parquet2::{
+    FallibleStreamingIterator,
     page::{CompressedPage, Page},
     read::get_owned_page_stream_from_column_start,
-    FallibleStreamingIterator,
 };
 use snafu::ResultExt;
 use tokio_stream::wrappers::ReceiverStream;
 
 use crate::{
+    JoinSnafu, OneShotRecvSnafu, PARQUET_MORSEL_SIZE, UnableToBindExpressionSnafu,
+    UnableToConvertRowGroupMetadataToStatsSnafu, UnableToCreateParquetPageStreamSnafu,
+    UnableToParseSchemaFromMetadataSnafu, UnableToRunExpressionOnStatsSnafu,
     determine_parquet_parallelism,
     metadata::read_parquet_metadata,
     read::ParquetSchemaInferenceOptions,
     read_planner::{CoalescePass, RangesContainer, ReadPlanner, SplitLargeRequestPass},
     statistics,
     stream_reader::spawn_column_iters_to_table_task,
-    JoinSnafu, OneShotRecvSnafu, UnableToBindExpressionSnafu,
-    UnableToConvertRowGroupMetadataToStatsSnafu, UnableToCreateParquetPageStreamSnafu,
-    UnableToParseSchemaFromMetadataSnafu, UnableToRunExpressionOnStatsSnafu, PARQUET_MORSEL_SIZE,
 };
 
 pub struct ParquetReaderBuilder {

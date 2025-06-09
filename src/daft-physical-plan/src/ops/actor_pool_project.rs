@@ -4,18 +4,17 @@ use common_error::{DaftError, DaftResult};
 use common_resource_request::ResourceRequest;
 use common_treenode::TreeNode;
 use daft_dsl::{
-    count_actor_pool_udfs,
+    Expr, ExprRef, count_actor_pool_udfs,
     functions::{
-        python::{get_concurrency, get_resource_request, PythonUDF},
         FunctionExpr,
+        python::{PythonUDF, get_concurrency, get_resource_request},
     },
-    Expr, ExprRef,
 };
-use daft_logical_plan::partitioning::{translate_clustering_spec, ClusteringSpec};
+use daft_logical_plan::partitioning::{ClusteringSpec, translate_clustering_spec};
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 
-use crate::{impl_default_tree_display, PhysicalPlanRef};
+use crate::{PhysicalPlanRef, impl_default_tree_display};
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ActorPoolProject {
@@ -30,7 +29,9 @@ impl ActorPoolProject {
 
         let num_actor_pool_udfs: usize = count_actor_pool_udfs(&projection);
         if !num_actor_pool_udfs == 1 {
-            return Err(DaftError::InternalError(format!("Expected ActorPoolProject to have exactly 1 actor pool UDF expression but found: {num_actor_pool_udfs}")));
+            return Err(DaftError::InternalError(format!(
+                "Expected ActorPoolProject to have exactly 1 actor pool UDF expression but found: {num_actor_pool_udfs}"
+            )));
         }
 
         Ok(Self {

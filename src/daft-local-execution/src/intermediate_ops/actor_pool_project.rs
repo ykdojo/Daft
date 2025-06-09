@@ -10,13 +10,13 @@ use daft_dsl::{
         get_concurrency, get_resource_request, get_udf_names, try_get_batch_size_from_udf,
     },
 };
+use daft_micropartition::MicroPartition;
 #[cfg(feature = "python")]
 use daft_micropartition::python::PyMicroPartition;
-use daft_micropartition::MicroPartition;
 use itertools::Itertools;
 #[cfg(feature = "python")]
 use pyo3::prelude::*;
-use tracing::{instrument, Span};
+use tracing::{Span, instrument};
 
 use super::intermediate_op::{
     IntermediateOpExecuteResult, IntermediateOpState, IntermediateOperator,

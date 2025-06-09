@@ -6,7 +6,7 @@ use std::{
 use common_error::DaftResult;
 use pyo3::prelude::*;
 
-use super::{task::RayTaskResultHandle, RaySwordfishTask};
+use super::{RaySwordfishTask, task::RayTaskResultHandle};
 use crate::scheduling::{
     scheduler::SchedulableTask,
     task::{SwordfishTask, Task, TaskDetails, TaskId, TaskResultHandleAwaiter},

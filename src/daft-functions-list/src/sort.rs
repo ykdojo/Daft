@@ -1,8 +1,9 @@
-use common_error::{ensure, DaftResult};
+use common_error::{DaftResult, ensure};
 use daft_core::prelude::*;
 use daft_dsl::{
+    ExprRef, Literal,
     functions::{FunctionArgs, ScalarFunction, ScalarUDF},
-    lit, literals_to_series, ExprRef, Literal,
+    lit, literals_to_series,
 };
 use serde::{Deserialize, Serialize};
 

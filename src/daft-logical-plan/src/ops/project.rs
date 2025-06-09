@@ -4,17 +4,17 @@ use common_error::DaftResult;
 use common_treenode::{Transformed, TreeNode, TreeNodeRecursion};
 use daft_core::prelude::*;
 use daft_dsl::{
-    functions::FunctionArgs, optimization, resolved_col, AggExpr, ApproxPercentileParams, Column,
-    Expr, ExprRef,
+    AggExpr, ApproxPercentileParams, Column, Expr, ExprRef, functions::FunctionArgs, optimization,
+    resolved_col,
 };
 use indexmap::{IndexMap, IndexSet};
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 
 use crate::{
+    LogicalPlan,
     logical_plan::{self},
     stats::StatsState,
-    LogicalPlan,
 };
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -593,12 +593,12 @@ fn replace_column_with_semantic_id_aggexpr(
 mod tests {
     use common_error::DaftResult;
     use daft_core::prelude::*;
-    use daft_dsl::{binary_op, lit, resolved_col, Operator};
+    use daft_dsl::{Operator, binary_op, lit, resolved_col};
 
     use crate::{
+        LogicalPlan,
         ops::Project,
         test::{dummy_scan_node, dummy_scan_operator},
-        LogicalPlan,
     };
 
     /// Test that nested common subexpressions are correctly split

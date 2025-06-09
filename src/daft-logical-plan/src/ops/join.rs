@@ -8,8 +8,8 @@ use common_treenode::{Transformed, TreeNode, TreeNodeRecursion};
 use daft_algebra::boolean::{combine_conjunction, split_conjunction};
 use daft_core::{join::JoinSide, prelude::*};
 use daft_dsl::{
-    join::infer_join_schema, resolved_col, right_col, Column, Expr, ExprRef, Operator,
-    ResolvedColumn,
+    Column, Expr, ExprRef, Operator, ResolvedColumn, join::infer_join_schema, resolved_col,
+    right_col,
 };
 use indexmap::IndexSet;
 #[cfg(feature = "python")]
@@ -17,10 +17,10 @@ use pyo3::prelude::*;
 use serde::{Deserialize, Serialize};
 
 use crate::{
+    LogicalPlan, LogicalPlanRef,
     logical_plan::{self},
     ops::Project,
     stats::{ApproxStats, PlanStats, StatsState},
-    LogicalPlan, LogicalPlanRef,
 };
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -245,7 +245,9 @@ impl Join {
                 IndexSet::from_iter(right_names.intersection(&left_names).cloned());
             if !common_names.is_superset(&merged_names) {
                 let missing_names = merged_names.difference(&common_names).collect::<Vec<_>>();
-                return Err(DaftError::SchemaMismatch(format!("Expected merged columns in join to exist in both sides of the join, found: {missing_names:?}")));
+                return Err(DaftError::SchemaMismatch(format!(
+                    "Expected merged columns in join to exist in both sides of the join, found: {missing_names:?}"
+                )));
             }
 
             let mut names_so_far: HashSet<String> =

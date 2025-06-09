@@ -1,4 +1,4 @@
-use std::sync::{atomic::AtomicBool, Mutex};
+use std::sync::{Mutex, atomic::AtomicBool};
 
 use tracing_chrome::ChromeLayerBuilder;
 use tracing_subscriber::{layer::SubscriberExt, prelude::*};
@@ -6,11 +6,11 @@ static TRACING_INIT: AtomicBool = AtomicBool::new(false);
 use std::{sync::LazyLock, time::Duration};
 
 use common_runtime::get_io_runtime;
-use opentelemetry::{global, trace::TracerProvider, KeyValue};
+use opentelemetry::{KeyValue, global, trace::TracerProvider};
 use opentelemetry_otlp::WithExportConfig;
 use opentelemetry_sdk::{
-    trace::{Sampler, SdkTracerProvider},
     Resource,
+    trace::{Sampler, SdkTracerProvider},
 };
 
 static CHROME_GUARD_HANDLE: LazyLock<Mutex<Option<tracing_chrome::FlushGuard>>> =

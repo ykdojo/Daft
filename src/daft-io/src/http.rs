@@ -8,22 +8,22 @@ use std::{
 
 use async_trait::async_trait;
 use common_io_config::HTTPConfig;
-use futures::{stream::BoxStream, TryStreamExt};
+use futures::{TryStreamExt, stream::BoxStream};
 use regex::Regex;
 use reqwest_middleware::{
-    reqwest::header::{self, CONTENT_LENGTH, RANGE},
     ClientBuilder, ClientWithMiddleware,
+    reqwest::header::{self, CONTENT_LENGTH, RANGE},
 };
-use reqwest_retry::{policies::ExponentialBackoff, Jitter, RetryTransientMiddleware};
+use reqwest_retry::{Jitter, RetryTransientMiddleware, policies::ExponentialBackoff};
 use snafu::{IntoError, ResultExt, Snafu};
 use url::Position;
 
 use super::object_io::{GetResult, ObjectSource};
 use crate::{
+    FileFormat,
     object_io::{FileMetadata, FileType, LSResult},
     stats::IOStatsRef,
     stream_utils::io_stats_on_bytestream,
-    FileFormat,
 };
 
 const HTTP_DELIMITER: &str = "/";
@@ -71,9 +71,7 @@ enum Error {
     ))]
     UnableToParseUtf8Header { path: String, source: FromUtf8Error },
 
-    #[snafu(display(
-        "Unable to parse data as Utf8 while reading body for file: {path}. {source}"
-    ))]
+    #[snafu(display("Unable to parse data as Utf8 while reading body for file: {path}. {source}"))]
     UnableToParseUtf8Body {
         path: String,
         source: reqwest_middleware::reqwest::Error,
@@ -386,7 +384,7 @@ mod tests {
 
     use std::default;
 
-    use crate::{object_io::ObjectSource, HttpSource, Result};
+    use crate::{HttpSource, Result, object_io::ObjectSource};
 
     #[tokio::test]
     async fn test_full_get_from_http() -> Result<()> {

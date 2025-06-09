@@ -9,7 +9,7 @@ use crate::{
         task::Task,
     },
     utils::{
-        channel::{create_channel, Receiver, Sender},
+        channel::{Receiver, Sender, create_channel},
         joinset::{JoinSet, OrderedJoinSet},
         stream::JoinableForwardingStream,
     },
@@ -122,9 +122,9 @@ pub(crate) fn materialize_running_pipeline_outputs<T: Task>(
 ) -> impl Stream<Item = DaftResult<PipelineOutput<T>>> + Send + Unpin + 'static {
     async fn result_awaiter<T: Task>(
         mut pipeline_output_stream: impl Stream<Item = DaftResult<PipelineOutput<T>>>
-            + Send
-            + Unpin
-            + 'static,
+        + Send
+        + Unpin
+        + 'static,
         tx: Sender<PipelineOutput<T>>,
     ) -> DaftResult<()> {
         let mut pending_tasks: OrderedJoinSet<DaftResult<Vec<PipelineOutput<T>>>> =
@@ -183,14 +183,14 @@ mod tests {
 
     use common_error::{DaftError, DaftResult};
     use common_partitioning::PartitionRef;
-    use futures::{stream, StreamExt};
+    use futures::{StreamExt, stream};
     use rand::{Rng, SeedableRng};
 
     use super::*;
     use crate::scheduling::{
         scheduler::spawn_default_scheduler_actor,
         tests::{
-            create_mock_partition_ref, setup_workers, MockTask, MockTaskBuilder, MockWorkerManager,
+            MockTask, MockTaskBuilder, MockWorkerManager, create_mock_partition_ref, setup_workers,
         },
         worker::WorkerId,
     };

@@ -1,12 +1,12 @@
-use common_error::{ensure, DaftError, DaftResult};
+use common_error::{DaftError, DaftResult, ensure};
 use daft_core::{
     prelude::{DataType, Field, Schema},
     series::Series,
     utils::supertype::try_get_supertype,
 };
 use daft_dsl::{
-    functions::{ScalarFunction, ScalarUDF},
     ExprRef,
+    functions::{ScalarFunction, ScalarUDF},
 };
 use serde::{Deserialize, Serialize};
 
@@ -33,16 +33,12 @@ impl ScalarUDF for FillNan {
             1 => {
                 let fill_value = fill_value.broadcast(data.len())?;
                 data.if_else(&fill_value, &predicate)
-
             }
-            len if len == data.len() => {
-                data.if_else(fill_value, &predicate)
-
-            }
+            len if len == data.len() => data.if_else(fill_value, &predicate),
             len => Err(DaftError::ValueError(format!(
                 "Expected fill_value to be a scalar or a vector of the same length as data, but received {len} and {}",
                 data.len()
-            )))
+            ))),
         }
     }
 
@@ -57,12 +53,16 @@ impl ScalarUDF for FillNan {
                     if data_field.dtype == DataType::Null {
                         Ok(Field::new(data_field.name, DataType::Null))
                     } else {
-                        match (&data_field.dtype.is_floating(), &fill_value_field.dtype.is_floating(), try_get_supertype(&data_field.dtype, &fill_value_field.dtype)) {
-                        (true, true, Ok(dtype)) => Ok(Field::new(data_field.name, dtype)),
-                        _ => Err(DaftError::TypeError(format!(
-                            "Expects input for fill_nan to be float, but received {data_field} and {fill_value_field}",
-                        ))),
-                    }
+                        match (
+                            &data_field.dtype.is_floating(),
+                            &fill_value_field.dtype.is_floating(),
+                            try_get_supertype(&data_field.dtype, &fill_value_field.dtype),
+                        ) {
+                            (true, true, Ok(dtype)) => Ok(Field::new(data_field.name, dtype)),
+                            _ => Err(DaftError::TypeError(format!(
+                                "Expects input for fill_nan to be float, but received {data_field} and {fill_value_field}",
+                            ))),
+                        }
                     }
                 }
                 (Err(e), _) | (_, Err(e)) => Err(e),

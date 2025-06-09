@@ -7,7 +7,7 @@ use std::{
     sync::Arc,
 };
 
-use common_error::{ensure, DaftError, DaftResult};
+use common_error::{DaftError, DaftResult, ensure};
 use common_hashable_float_wrapper::FloatWrapper;
 use daft_core::{
     datatypes::IntervalValue,
@@ -22,7 +22,7 @@ use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "python")]
 use crate::pyobj_serde::PyObjectWrapper;
-use crate::{expr::Expr, ExprRef};
+use crate::{ExprRef, expr::Expr};
 
 /// Stores a literal value for queries and computations.
 /// We only need to support the limited types below since those are the types that we would get from python.
@@ -761,7 +761,7 @@ pub fn literals_to_series(values: &[LiteralValue]) -> DaftResult<Series> {
             return Err(DaftError::ValueError(format!(
                 "Unsupported data type: {:?}",
                 dtype
-            )))
+            )));
         }
     })
 }

@@ -1,9 +1,9 @@
-use daft_dsl::{binary_op, Operator};
+use daft_dsl::{Operator, binary_op};
 use daft_functions::{coalesce::Coalesce, float::IsNan};
 use daft_sql::sql_expr;
 use spark_connect::Expression;
 
-use super::{BinaryFunction, FunctionModule, SparkFunction, UnaryFunction, TODO_FUNCTION};
+use super::{BinaryFunction, FunctionModule, SparkFunction, TODO_FUNCTION, UnaryFunction};
 use crate::{
     error::{ConnectError, ConnectResult},
     invalid_argument_err,

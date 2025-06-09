@@ -6,8 +6,8 @@ use std::{
 use async_recursion::async_recursion;
 use async_trait::async_trait;
 use aws_config::{
-    meta::credentials::CredentialsProviderChain, retry::RetryMode, timeout::TimeoutConfig,
-    SdkConfig,
+    SdkConfig, meta::credentials::CredentialsProviderChain, retry::RetryMode,
+    timeout::TimeoutConfig,
 };
 use aws_credential_types::{
     cache::{CredentialsCache, ProvideCachedCredentials, SharedCredentialsCache},
@@ -27,7 +27,7 @@ use aws_sig_auth::signer::SigningRequirements;
 use aws_smithy_async::rt::sleep::TokioSleep;
 use common_io_config::S3Config;
 use common_runtime::get_io_pool_num_threads;
-use futures::{stream::BoxStream, FutureExt, StreamExt, TryStreamExt};
+use futures::{FutureExt, StreamExt, TryStreamExt, stream::BoxStream};
 use reqwest::StatusCode;
 use s3::{
     client::customize::Response,
@@ -38,17 +38,17 @@ use s3::{
         list_objects_v2::ListObjectsV2Error,
     },
 };
-use snafu::{ensure, IntoError, ResultExt, Snafu};
+use snafu::{IntoError, ResultExt, Snafu, ensure};
 use tokio::sync::{OwnedSemaphorePermit, SemaphorePermit};
 use url::{ParseError, Position};
 
 use super::object_io::{GetResult, ObjectSource};
 use crate::{
+    FileFormat, InvalidArgumentSnafu, SourceType,
     object_io::{FileMetadata, FileType, LSResult},
     retry::{ExponentialBackoff, RetryError},
     stats::IOStatsRef,
     stream_utils::io_stats_on_bytestream,
-    FileFormat, InvalidArgumentSnafu, SourceType,
 };
 
 const S3_DELIMITER: &str = "/";
@@ -530,7 +530,11 @@ async fn build_s3_conf(
         } else if retry_mode.trim().eq_ignore_ascii_case("standard") {
             retry_config
         } else {
-            return Err(crate::Error::InvalidArgument { msg: format!("Invalid Retry Mode, Daft S3 client currently only supports standard and adaptive, got {retry_mode}") });
+            return Err(crate::Error::InvalidArgument {
+                msg: format!(
+                    "Invalid Retry Mode, Daft S3 client currently only supports standard and adaptive, got {retry_mode}"
+                ),
+            });
         }
     } else {
         retry_config
@@ -574,7 +578,10 @@ async fn build_s3_conf(
                 Err(RetryError::Transient(err))
             }
             Err(err @ CredentialsNotLoaded(..)) => {
-                log::warn!("S3 Credentials not provided or found when making client for {}! Reverting to Anonymous mode. {err}", s3_conf.region().unwrap_or(&DEFAULT_REGION));
+                log::warn!(
+                    "S3 Credentials not provided or found when making client for {}! Reverting to Anonymous mode. {err}",
+                    s3_conf.region().unwrap_or(&DEFAULT_REGION)
+                );
                 Ok(true)
             }
             Err(err) => Err(RetryError::Permanent(err)),
@@ -755,7 +762,11 @@ impl S3LikeSource {
                                 })?;
 
                             let new_region = Region::new(region_name);
-                            log::debug!("S3 Region of {uri} different than client {:?} vs {:?} Attempting GET in that region with new client", new_region, region);
+                            log::debug!(
+                                "S3 Region of {uri} different than client {:?} vs {:?} Attempting GET in that region with new client",
+                                new_region,
+                                region
+                            );
                             self.get_impl(permit, uri, range, &new_region).await
                         }
                         _ => Err(UnableToOpenFileSnafu { path: uri }
@@ -838,7 +849,11 @@ impl S3LikeSource {
                                 })?;
 
                             let new_region = Region::new(region_name);
-                            log::debug!("S3 Region of {uri} different than client {:?} vs {:?} Attempting HEAD in that region with new client", new_region, region);
+                            log::debug!(
+                                "S3 Region of {uri} different than client {:?} vs {:?} Attempting HEAD in that region with new client",
+                                new_region,
+                                region
+                            );
                             self.head_impl(permit, uri, &new_region).await
                         }
                         _ => Err(UnableToHeadFileSnafu { path: uri }
@@ -864,7 +879,9 @@ impl S3LikeSource {
         region: &Region,
         page_size: Option<i32>,
     ) -> super::Result<LSResult> {
-        log::debug!("S3 list_objects: Bucket: {bucket}, Key: {key}, continuation_token: {continuation_token:?} in region: {region}");
+        log::debug!(
+            "S3 list_objects: Bucket: {bucket}, Key: {key}, continuation_token: {continuation_token:?} in region: {region}"
+        );
         let request = self
             .get_s3_client(region)
             .await?
@@ -979,7 +996,11 @@ impl S3LikeSource {
                             })?;
 
                         let new_region = Region::new(region_name);
-                        log::debug!("S3 Region of {uri} different than client {:?} vs {:?} Attempting List in that region with new client", new_region, region);
+                        log::debug!(
+                            "S3 Region of {uri} different than client {:?} vs {:?} Attempting List in that region with new client",
+                            new_region,
+                            region
+                        );
                         self.list_impl(
                             permit,
                             scheme,
@@ -1111,7 +1132,9 @@ impl S3LikeSource {
             .await
             .context(UnableToGrabSemaphoreSnafu)?;
 
-        log::debug!("S3 put multipart request: {uri}, num_parts: {part_count}, part_size: {part_size}, in region: {region}");
+        log::debug!(
+            "S3 put multipart request: {uri}, num_parts: {part_count}, part_size: {part_size}, in region: {region}"
+        );
 
         let (_scheme, bucket, key) = parse_url(uri)?;
 
@@ -1119,7 +1142,9 @@ impl S3LikeSource {
             return Err(Error::NotAFile { path: uri.into() }.into());
         }
 
-        log::debug!("S3 put multipart parsed uri: {uri} into Bucket: {bucket}, Key: {key}, part_size: {part_size}, part_count: {part_count} and region {region}");
+        log::debug!(
+            "S3 put multipart parsed uri: {uri} into Bucket: {bucket}, Key: {key}, part_size: {part_size}, part_count: {part_count} and region {region}"
+        );
 
         let client = self.get_s3_client(region).await?;
 
@@ -1467,7 +1492,7 @@ mod tests {
     use bytes::Bytes;
     use common_io_config::S3Config;
 
-    use crate::{object_io::ObjectSource, s3_like::BytesChunker, Result, S3LikeSource};
+    use crate::{Result, S3LikeSource, object_io::ObjectSource, s3_like::BytesChunker};
 
     #[tokio::test]
     async fn test_full_get_from_s3() -> Result<()> {

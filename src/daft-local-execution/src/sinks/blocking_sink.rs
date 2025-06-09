@@ -8,13 +8,13 @@ use daft_micropartition::MicroPartition;
 use tracing::{info_span, instrument};
 
 use crate::{
-    channel::{create_channel, Receiver},
+    ExecutionRuntimeContext, ExecutionTaskSpawner, OperatorOutput, TaskSet,
+    channel::{Receiver, create_channel},
     dispatcher::{DispatchSpawner, UnorderedDispatcher},
     pipeline::{NodeInfo, PipelineNode, TranslationContext},
     progress_bar::ProgressBarColor,
     resource_manager::MemoryManager,
     runtime_stats::{CountingReceiver, CountingSender, RuntimeStatsContext},
-    ExecutionRuntimeContext, ExecutionTaskSpawner, OperatorOutput, TaskSet,
 };
 pub trait BlockingSinkState: Send + Sync {
     fn as_any_mut(&mut self) -> &mut dyn std::any::Any;

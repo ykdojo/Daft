@@ -4,13 +4,13 @@ use common_error::DaftResult;
 use daft_core::{join::JoinSide, prelude::SchemaRef};
 use daft_micropartition::MicroPartition;
 use daft_recordbatch::RecordBatch;
-use tracing::{instrument, Span};
+use tracing::{Span, instrument};
 
 use super::intermediate_op::{
     IntermediateOpExecuteResult, IntermediateOpState, IntermediateOperator,
     IntermediateOperatorResult,
 };
-use crate::{state_bridge::BroadcastStateBridgeRef, ExecutionTaskSpawner};
+use crate::{ExecutionTaskSpawner, state_bridge::BroadcastStateBridgeRef};
 
 struct CrossJoinState {
     bridge: BroadcastStateBridgeRef<Vec<RecordBatch>>,

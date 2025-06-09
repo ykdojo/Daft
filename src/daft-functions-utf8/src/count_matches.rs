@@ -1,11 +1,12 @@
 use std::{iter, sync::Arc};
 
 use aho_corasick::{AhoCorasickBuilder, MatchKind};
-use common_error::{ensure, DaftError, DaftResult};
+use common_error::{DaftError, DaftResult, ensure};
 use daft_core::prelude::*;
 use daft_dsl::{
+    ExprRef,
     functions::{FunctionArgs, ScalarFunction, ScalarUDF},
-    lit, ExprRef,
+    lit,
 };
 use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]

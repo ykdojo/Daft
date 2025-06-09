@@ -1,12 +1,12 @@
 use dashmap::DashMap;
 use spark_connect::{
+    AddArtifactsRequest, AddArtifactsResponse, AnalyzePlanRequest, AnalyzePlanResponse,
+    ArtifactStatusesRequest, ArtifactStatusesResponse, ConfigRequest, ConfigResponse,
+    ExecutePlanRequest, ExecutePlanResponse, FetchErrorDetailsRequest, FetchErrorDetailsResponse,
+    InterruptRequest, InterruptResponse, Plan, ReattachExecuteRequest, ReleaseExecuteRequest,
+    ReleaseExecuteResponse, ReleaseSessionRequest, ReleaseSessionResponse,
     analyze_plan_request::explain::ExplainMode, command::CommandType, plan::OpType,
-    spark_connect_service_server::SparkConnectService, AddArtifactsRequest, AddArtifactsResponse,
-    AnalyzePlanRequest, AnalyzePlanResponse, ArtifactStatusesRequest, ArtifactStatusesResponse,
-    ConfigRequest, ConfigResponse, ExecutePlanRequest, ExecutePlanResponse,
-    FetchErrorDetailsRequest, FetchErrorDetailsResponse, InterruptRequest, InterruptResponse, Plan,
-    ReattachExecuteRequest, ReleaseExecuteRequest, ReleaseExecuteResponse, ReleaseSessionRequest,
-    ReleaseSessionResponse,
+    spark_connect_service_server::SparkConnectService,
 };
 use tonic::{Request, Response, Status};
 use tracing::debug;
@@ -18,7 +18,7 @@ use crate::{
     invalid_argument_err, not_yet_implemented,
     response_builder::ResponseBuilder,
     session::ConnectSession,
-    spark_analyzer::{to_spark_datatype, SparkAnalyzer},
+    spark_analyzer::{SparkAnalyzer, to_spark_datatype},
     util::FromOptionalField,
 };
 
@@ -186,7 +186,9 @@ impl DaftSparkConnectService {
 
                 if let Some(common) = &input.common {
                     if common.origin.is_some() {
-                        debug!("Ignoring common metadata for relation: {common:?}; not yet implemented");
+                        debug!(
+                            "Ignoring common metadata for relation: {common:?}; not yet implemented"
+                        );
                     }
                 }
 

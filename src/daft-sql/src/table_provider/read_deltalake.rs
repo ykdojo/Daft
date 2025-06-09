@@ -1,8 +1,8 @@
 use daft_logical_plan::LogicalPlanBuilder;
 use sqlparser::ast::TableFunctionArgs;
 
-use super::{expr_to_iocfg, SQLTableFunction};
-use crate::{error::SQLPlannerResult, unsupported_sql_err, SQLPlanner};
+use super::{SQLTableFunction, expr_to_iocfg};
+use crate::{SQLPlanner, error::SQLPlannerResult, unsupported_sql_err};
 
 pub(super) struct ReadDeltalakeFunction;
 
@@ -39,6 +39,8 @@ impl SQLTableFunction for ReadDeltalakeFunction {
         planner: &SQLPlanner,
         args: &TableFunctionArgs,
     ) -> SQLPlannerResult<LogicalPlanBuilder> {
-        unsupported_sql_err!("`read_deltalake` function is not supported. Enable the `python` feature to use this function.")
+        unsupported_sql_err!(
+            "`read_deltalake` function is not supported. Enable the `python` feature to use this function."
+        )
     }
 }

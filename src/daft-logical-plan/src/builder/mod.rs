@@ -16,8 +16,8 @@ use common_treenode::TreeNode;
 use daft_algebra::boolean::combine_conjunction;
 use daft_core::join::{JoinStrategy, JoinType};
 use daft_dsl::{
-    left_col, resolved_col, right_col, unresolved_col, Column, Expr, ExprRef, UnresolvedColumn,
-    WindowSpec,
+    Column, Expr, ExprRef, UnresolvedColumn, WindowSpec, left_col, resolved_col, right_col,
+    unresolved_col,
 };
 use daft_schema::schema::{Schema, SchemaRef};
 use indexmap::IndexSet;
@@ -34,12 +34,12 @@ use {
 };
 
 use crate::{
+    LogicalPlanRef,
     display::json::JsonVisitor,
     logical_plan::{LogicalPlan, SubqueryAlias},
     ops::{
-        self,
+        self, SetQuantifier, UnionStrategy,
         join::{JoinOptions, JoinPredicate},
-        SetQuantifier, UnionStrategy,
     },
     optimization::OptimizerBuilder,
     partitioning::{
@@ -47,7 +47,6 @@ use crate::{
     },
     sink_info::{OutputFileInfo, SinkInfo},
     source_info::{InMemoryInfo, SourceInfo},
-    LogicalPlanRef,
 };
 
 /// A logical plan builder, which simplifies constructing logical plans via

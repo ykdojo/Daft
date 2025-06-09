@@ -1,14 +1,14 @@
 use daft_core::{prelude::DataType, python::PyDataType};
 use pyo3::{
+    Bound, PyAny, PyResult, Python,
     exceptions::PyValueError,
     types::{PyAnyMethods, PyList, PyListMethods},
-    Bound, PyAny, PyResult, Python,
 };
 
 use crate::{
+    AggExpr, Column, Expr, ExprRef, LiteralValue, Operator, Subquery, WindowExpr, WindowSpec,
     functions::{FunctionExpr, ScalarFunction},
     python::PyExpr,
-    AggExpr, Column, Expr, ExprRef, LiteralValue, Operator, Subquery, WindowExpr, WindowSpec,
 };
 
 /// The generic `R` of the py visitor implementation.
@@ -154,7 +154,7 @@ impl<'py> PyVisitor<'py> {
             _ => {
                 return Err(PyValueError::new_err(
                     "Visitor does not support function expressions",
-                ))
+                ));
             }
         };
 

@@ -1,4 +1,3 @@
-#![feature(let_chains)]
 #![feature(result_flattening)]
 
 use std::{cmp::max, num::NonZeroUsize};
@@ -44,7 +43,9 @@ pub enum Error {
     #[snafu(display("{source}"))]
     DaftIOError { source: daft_io::Error },
 
-    #[snafu(display("Parquet reader timed out while trying to read: {path} with a time budget of {duration_ms} ms"))]
+    #[snafu(display(
+        "Parquet reader timed out while trying to read: {path} with a time budget of {duration_ms} ms"
+    ))]
     FileReadTimeout { path: String, duration_ms: i64 },
     #[snafu(display("Internal IO Error when opening: {path}:\nDetails:\n{source}"))]
     InternalIOError {

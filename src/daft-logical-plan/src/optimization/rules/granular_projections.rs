@@ -2,12 +2,12 @@ use std::{any::TypeId, collections::HashSet, sync::Arc};
 
 use common_error::DaftResult;
 use common_treenode::{Transformed, TreeNode};
-use daft_dsl::{functions::ScalarFunction, resolved_col, Expr};
+use daft_dsl::{Expr, functions::ScalarFunction, resolved_col};
 use daft_functions_uri::download::UrlDownload;
 use itertools::Itertools;
 
 use super::OptimizerRule;
-use crate::{ops::Project, LogicalPlan};
+use crate::{LogicalPlan, ops::Project};
 
 /// This rule will split projections into multiple projections such that expressions that
 /// need their own granular morsel sizing will be isolated. Right now, those would be
@@ -210,10 +210,10 @@ impl SplitGranularProjection {
 mod tests {
 
     use common_scan_info::Pushdowns;
-    use daft_dsl::{lit, Column, ExprRef, ResolvedColumn};
+    use daft_dsl::{Column, ExprRef, ResolvedColumn, lit};
     use daft_functions_binary::{BinaryConcat, BinaryDecode, Codec};
     use daft_functions_uri::download::UrlDownload;
-    use daft_functions_utf8::{capitalize, lower, Capitalize};
+    use daft_functions_utf8::{Capitalize, capitalize, lower};
     use daft_schema::{dtype::DataType, field::Field};
 
     use super::*;
@@ -247,11 +247,9 @@ mod tests {
             dummy_scan_operator(vec![Field::new("url", DataType::Utf8)]),
             Pushdowns::default(),
         )
-        .with_columns(vec![ScalarFunction::new(
-            UrlDownload,
-            vec![resolved_col("url")],
-        )
-        .into()])
+        .with_columns(vec![
+            ScalarFunction::new(UrlDownload, vec![resolved_col("url")]).into(),
+        ])
         .unwrap()
         .build();
 

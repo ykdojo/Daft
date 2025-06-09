@@ -4,7 +4,7 @@ use common_error::DaftResult;
 use daft_core::prelude::SchemaRef;
 use daft_dsl::expr::bound_expr::BoundExpr;
 use daft_micropartition::MicroPartition;
-use daft_recordbatch::{make_probeable_builder, ProbeState, ProbeableBuilder, RecordBatch};
+use daft_recordbatch::{ProbeState, ProbeableBuilder, RecordBatch, make_probeable_builder};
 use itertools::Itertools;
 use tracing::{info_span, instrument};
 
@@ -12,7 +12,7 @@ use super::blocking_sink::{
     BlockingSink, BlockingSinkFinalizeResult, BlockingSinkSinkResult, BlockingSinkState,
     BlockingSinkStatus,
 };
-use crate::{state_bridge::BroadcastStateBridgeRef, ExecutionTaskSpawner};
+use crate::{ExecutionTaskSpawner, state_bridge::BroadcastStateBridgeRef};
 
 enum ProbeTableState {
     Building {
@@ -43,7 +43,7 @@ impl ProbeTableState {
 
     fn add_tables(&mut self, input: &Arc<MicroPartition>) -> DaftResult<()> {
         if let Self::Building {
-            ref mut probe_table_builder,
+            probe_table_builder,
             projection,
             tables,
         } = self

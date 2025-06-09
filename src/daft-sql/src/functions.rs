@@ -5,10 +5,9 @@ use std::{
 
 use daft_core::prelude::Schema;
 use daft_dsl::{
-    binary_op,
+    Expr, ExprRef, Operator, WindowExpr, WindowSpec, binary_op,
     expr::window::{WindowBoundary, WindowFrame},
-    functions::{FunctionArgs, ScalarFunction, ScalarUDF, FUNCTION_REGISTRY},
-    Expr, ExprRef, Operator, WindowExpr, WindowSpec,
+    functions::{FUNCTION_REGISTRY, FunctionArgs, ScalarFunction, ScalarUDF},
 };
 use daft_session::Session;
 use sqlparser::ast::{
@@ -610,7 +609,9 @@ impl SQLPlanner<'_> {
                     }
                     positional_args.insert(idx, self.try_unwrap_function_arg_expr(arg)?);
                 }
-                other => unsupported_sql_err!("unsupported function argument type: {other}, valid function arguments for this function are: {expected_named:?}."),
+                other => unsupported_sql_err!(
+                    "unsupported function argument type: {other}, valid function arguments for this function are: {expected_named:?}."
+                ),
             }
         }
 

@@ -2,8 +2,8 @@ use std::{cmp::Ordering, iter::zip};
 
 use arrow2::{
     array::{
-        ord::{build_compare, DynComparator},
         Array, BinaryArray, BooleanArray, FixedSizeBinaryArray, PrimitiveArray, Utf8Array,
+        ord::{DynComparator, build_compare},
     },
     datatypes::{DataType, PhysicalType},
     error::{Error, Result},
@@ -657,7 +657,7 @@ pub fn search_sorted(
         t => {
             return Err(Error::NotYetImplemented(format!(
                 "search_sorted not implemented for type {t:?}"
-            )))
+            )));
         }
     })
 }

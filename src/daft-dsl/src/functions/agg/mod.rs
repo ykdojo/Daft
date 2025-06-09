@@ -3,8 +3,8 @@ use daft_core::prelude::*;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    functions::{ScalarFunction, ScalarUDF},
     ExprRef,
+    functions::{ScalarFunction, ScalarUDF},
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
@@ -75,17 +75,20 @@ impl ScalarUDF for MergeMeanFunction {
                         let s_max = std::cmp::min(p_prime, s + Self::EXTRA_SCALE);
 
                         if !(1..=38).contains(&p_prime) {
-                            Err(DaftError::TypeError(
-                                format!("Cannot infer supertypes for mean on type: {} result precision: {p_prime} exceed bounds of [1, 38]", sum_field.dtype)
-                            ))
+                            Err(DaftError::TypeError(format!(
+                                "Cannot infer supertypes for mean on type: {} result precision: {p_prime} exceed bounds of [1, 38]",
+                                sum_field.dtype
+                            )))
                         } else if s_max > 38 {
-                            Err(DaftError::TypeError(
-                                format!("Cannot infer supertypes for mean on type: {} result scale: {s_max} exceed bounds of [0, 38]", sum_field.dtype)
-                            ))
+                            Err(DaftError::TypeError(format!(
+                                "Cannot infer supertypes for mean on type: {} result scale: {s_max} exceed bounds of [0, 38]",
+                                sum_field.dtype
+                            )))
                         } else if s_max > p_prime {
-                            Err(DaftError::TypeError(
-                                format!("Cannot infer supertypes for mean on type: {} result scale: {s_max} exceed precision {p_prime}", sum_field.dtype)
-                            ))
+                            Err(DaftError::TypeError(format!(
+                                "Cannot infer supertypes for mean on type: {} result scale: {s_max} exceed precision {p_prime}",
+                                sum_field.dtype
+                            )))
                         } else {
                             Ok(Field::new(
                                 sum_field.name,

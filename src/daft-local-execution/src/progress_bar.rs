@@ -1,7 +1,7 @@
 use std::{
     sync::{
-        atomic::{AtomicU64, Ordering},
         Arc,
+        atomic::{AtomicU64, Ordering},
     },
     time::Instant,
 };
@@ -188,7 +188,7 @@ pub fn make_progress_bar_manager() -> Arc<dyn ProgressBarManager> {
 
 #[cfg(feature = "python")]
 mod python {
-    use pyo3::{types::PyAnyMethods, PyObject, Python};
+    use pyo3::{PyObject, Python, types::PyAnyMethods};
 
     use super::*;
 

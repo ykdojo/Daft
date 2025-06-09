@@ -1,6 +1,6 @@
 use common_error::DaftResult;
 use common_treenode::Transformed;
-use daft_dsl::{lit, null_lit, Expr, ExprRef, LiteralValue, Operator};
+use daft_dsl::{Expr, ExprRef, LiteralValue, Operator, lit, null_lit};
 use daft_schema::schema::SchemaRef;
 
 fn is_null(expr: &Expr) -> bool {

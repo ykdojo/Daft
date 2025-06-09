@@ -7,14 +7,14 @@ use daft_core::prelude::SchemaRef;
 use daft_io::{IOStatsContext, IOStatsRef};
 use daft_logical_plan::stats::StatsState;
 use daft_micropartition::MicroPartition;
-use futures::{stream::BoxStream, StreamExt};
+use futures::{StreamExt, stream::BoxStream};
 
 use crate::{
-    channel::{create_channel, Receiver},
+    ExecutionRuntimeContext,
+    channel::{Receiver, create_channel},
     pipeline::{NodeInfo, PipelineNode, TranslationContext},
     progress_bar::ProgressBarColor,
     runtime_stats::{CountingSender, RuntimeStatsContext},
-    ExecutionRuntimeContext,
 };
 
 pub type SourceStream<'a> = BoxStream<'a, DaftResult<Arc<MicroPartition>>>;

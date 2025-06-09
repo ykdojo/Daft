@@ -5,7 +5,7 @@ use daft_core::prelude::SchemaRef;
 use daft_dsl::expr::bound_expr::BoundExpr;
 use daft_micropartition::MicroPartition;
 use daft_recordbatch::RecordBatch;
-use tracing::{instrument, Span};
+use tracing::{Span, instrument};
 
 use super::blocking_sink::{BlockingSinkSinkResult, BlockingSinkState, BlockingSinkStatus};
 use crate::ExecutionTaskSpawner;
@@ -40,10 +40,7 @@ impl WindowBaseState {
         partition_by: &[BoundExpr],
         sink_name: &str,
     ) -> DaftResult<()> {
-        if let Self::Accumulating {
-            ref mut inner_states,
-        } = self
-        {
+        if let Self::Accumulating { inner_states } = self {
             let partitioned = input.partition_by_hash(partition_by, inner_states.len())?;
             for (p, state) in partitioned.into_iter().zip(inner_states.iter_mut()) {
                 let state = state.get_or_insert_with(SinglePartitionWindowState::default);
@@ -58,10 +55,7 @@ impl WindowBaseState {
     }
 
     pub fn finalize(&mut self, sink_name: &str) -> Vec<Option<SinglePartitionWindowState>> {
-        let res = if let Self::Accumulating {
-            ref mut inner_states,
-        } = self
-        {
+        let res = if let Self::Accumulating { inner_states } = self {
             std::mem::take(inner_states)
         } else {
             panic!("{} should be in Accumulating state", sink_name);

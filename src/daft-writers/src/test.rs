@@ -3,15 +3,15 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use common_error::DaftResult;
 use daft_core::{
-    prelude::{DataType, Field, Schema, UInt64Array, UInt8Array, Utf8Array},
+    prelude::{DataType, Field, Schema, UInt8Array, UInt64Array, Utf8Array},
     series::IntoSeries,
 };
 use daft_micropartition::MicroPartition;
 use daft_recordbatch::RecordBatch;
 
 use crate::{
-    AsyncFileWriter, TargetFileSizeWriterFactory, TargetInMemorySizeBytesCalculator, WriterFactory,
-    RETURN_PATHS_COLUMN_NAME,
+    AsyncFileWriter, RETURN_PATHS_COLUMN_NAME, TargetFileSizeWriterFactory,
+    TargetInMemorySizeBytesCalculator, WriterFactory,
 };
 
 pub struct DummyWriterFactory;

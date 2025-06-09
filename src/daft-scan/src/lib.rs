@@ -1,5 +1,4 @@
 #![feature(if_let_guard)]
-#![feature(let_chains)]
 use std::{
     any::Any,
     borrow::Cow,
@@ -922,7 +921,7 @@ mod test {
     use daft_schema::{schema::Schema, time_unit::TimeUnit};
     use itertools::Itertools;
 
-    use crate::{glob::GlobScanOperator, storage_config::StorageConfig, DataSource, ScanTask};
+    use crate::{DataSource, ScanTask, glob::GlobScanOperator, storage_config::StorageConfig};
 
     fn make_scan_task(num_sources: usize) -> ScanTask {
         let sources = (0..num_sources)
@@ -988,7 +987,10 @@ mod test {
     async fn test_glob_display_condenses() -> DaftResult<()> {
         let glob_scan_operator: GlobScanOperator = make_glob_scan_operator(8, false).await;
         let condensed_glob_paths: Vec<String> = glob_scan_operator.multiline_display();
-        assert_eq!(condensed_glob_paths[1], "Glob paths = [../../tests/assets/parquet-data/mvp.parquet, ../../tests/assets/parquet-data/mvp.parquet, ../../tests/assets/parquet-data/mvp.parquet, ..., ../../tests/assets/parquet-data/mvp.parquet, ../../tests/assets/parquet-data/mvp.parquet, ../../tests/assets/parquet-data/mvp.parquet]");
+        assert_eq!(
+            condensed_glob_paths[1],
+            "Glob paths = [../../tests/assets/parquet-data/mvp.parquet, ../../tests/assets/parquet-data/mvp.parquet, ../../tests/assets/parquet-data/mvp.parquet, ..., ../../tests/assets/parquet-data/mvp.parquet, ../../tests/assets/parquet-data/mvp.parquet, ../../tests/assets/parquet-data/mvp.parquet]"
+        );
         Ok(())
     }
 
@@ -1018,8 +1020,16 @@ mod test {
         .await
         .unwrap()?;
         assert!(scan_tasks.len() > 1, "Expected more than 1 scan tasks");
-        assert_eq!(scan_tasks[0].num_rows(), Some(100), "We should be able to populate stats from inference when the scan task's file matches the file used during inference");
-        assert_eq!(scan_tasks[1].num_rows(), Some(100), "We should be able to populate stats from inference when the scan task's file matches the file used during inference");
+        assert_eq!(
+            scan_tasks[0].num_rows(),
+            Some(100),
+            "We should be able to populate stats from inference when the scan task's file matches the file used during inference"
+        );
+        assert_eq!(
+            scan_tasks[1].num_rows(),
+            Some(100),
+            "We should be able to populate stats from inference when the scan task's file matches the file used during inference"
+        );
         Ok(())
     }
 

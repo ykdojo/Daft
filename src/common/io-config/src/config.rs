@@ -2,7 +2,7 @@ use std::fmt::{Display, Formatter};
 
 use serde::{Deserialize, Serialize};
 
-use crate::{unity::UnityConfig, AzureConfig, GCSConfig, HTTPConfig, S3Config};
+use crate::{AzureConfig, GCSConfig, HTTPConfig, S3Config, unity::UnityConfig};
 #[derive(Clone, Default, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct IOConfig {
     pub s3: S3Config,

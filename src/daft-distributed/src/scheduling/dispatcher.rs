@@ -8,7 +8,7 @@ use super::{
     worker::{Worker, WorkerId, WorkerManager},
 };
 use crate::utils::{
-    channel::{create_channel, Receiver, Sender},
+    channel::{Receiver, Sender, create_channel},
     joinset::{JoinSet, JoinSetId},
 };
 
@@ -181,14 +181,14 @@ impl<T: Task> DispatcherHandle<T> {
 
 #[cfg(test)]
 mod tests {
-    use rand::{rngs::StdRng, Rng, SeedableRng};
+    use rand::{Rng, SeedableRng, rngs::StdRng};
 
     use super::*;
     use crate::{
         scheduling::{
-            scheduler::{test_utils::setup_workers, SchedulerHandle, SubmittedTask},
+            scheduler::{SchedulerHandle, SubmittedTask, test_utils::setup_workers},
             task::tests::MockTaskFailure,
-            tests::{create_mock_partition_ref, MockTask, MockTaskBuilder},
+            tests::{MockTask, MockTaskBuilder, create_mock_partition_ref},
             worker::tests::MockWorkerManager,
         },
         utils::channel::create_oneshot_channel,
@@ -367,10 +367,12 @@ mod tests {
 
         let text_context_result = test_context.cleanup().await;
         assert!(text_context_result.is_err());
-        assert!(text_context_result
-            .unwrap_err()
-            .to_string()
-            .contains("panicked with message \"test panic\""));
+        assert!(
+            text_context_result
+                .unwrap_err()
+                .to_string()
+                .contains("panicked with message \"test panic\"")
+        );
 
         Ok(())
     }
@@ -411,10 +413,12 @@ mod tests {
 
         let cleanup_result = test_context.cleanup().await;
         assert!(cleanup_result.is_err());
-        assert!(cleanup_result
-            .unwrap_err()
-            .to_string()
-            .contains("test panic"));
+        assert!(
+            cleanup_result
+                .unwrap_err()
+                .to_string()
+                .contains("test panic")
+        );
 
         Ok(())
     }

@@ -3,8 +3,8 @@ use std::{collections::HashMap, sync::Arc};
 use common_error::{DaftError, DaftResult};
 use common_treenode::{Transformed, TreeNode, TreeNodeRecursion, TreeNodeRewriter};
 use daft_logical_plan::{
-    ops::Source, partitioning::ClusteringSpecRef, source_info::PlaceHolderInfo, ClusteringSpec,
-    LogicalPlan, LogicalPlanRef, SourceInfo,
+    ClusteringSpec, LogicalPlan, LogicalPlanRef, SourceInfo, ops::Source,
+    partitioning::ClusteringSpecRef, source_info::PlaceHolderInfo,
 };
 use daft_schema::schema::SchemaRef;
 

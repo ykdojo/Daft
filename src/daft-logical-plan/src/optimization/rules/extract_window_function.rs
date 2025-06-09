@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use common_error::{DaftError, DaftResult};
 use common_treenode::{Transformed, TreeNode, TreeNodeRecursion};
-use daft_dsl::{expr::window::WindowSpec, resolved_col, Expr, ExprRef, WindowExpr};
+use daft_dsl::{Expr, ExprRef, WindowExpr, expr::window::WindowSpec, resolved_col};
 use daft_schema::schema::Schema;
 use indexmap::{IndexMap, IndexSet};
 
@@ -199,7 +199,7 @@ mod tests {
     use std::sync::Arc;
 
     use common_error::DaftResult;
-    use daft_dsl::{expr::window::WindowSpec, resolved_col, Expr, WindowExpr};
+    use daft_dsl::{Expr, WindowExpr, expr::window::WindowSpec, resolved_col};
     use daft_schema::{dtype::DataType, field::Field};
 
     use crate::{

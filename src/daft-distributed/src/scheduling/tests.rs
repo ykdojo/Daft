@@ -2,6 +2,6 @@
 
 pub use crate::scheduling::{
     scheduler::test_utils::setup_workers,
-    task::tests::{create_mock_partition_ref, MockTask, MockTaskBuilder, MockTaskResultHandle},
+    task::tests::{MockTask, MockTaskBuilder, MockTaskResultHandle, create_mock_partition_ref},
     worker::tests::MockWorkerManager,
 };

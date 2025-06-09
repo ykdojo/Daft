@@ -1,6 +1,6 @@
 use common_io_config::{AzureConfig, GCSConfig, HTTPConfig, IOConfig, S3Config};
 use daft_core::prelude::{DataType, Field};
-use daft_dsl::{literal_value, Expr, ExprRef, LiteralValue};
+use daft_dsl::{Expr, ExprRef, LiteralValue, literal_value};
 
 use super::SQLModule;
 use crate::{

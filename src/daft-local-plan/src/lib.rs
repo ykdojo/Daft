@@ -17,5 +17,5 @@ pub use plan::{
     WindowPartitionOnly,
 };
 #[cfg(feature = "python")]
-pub use python::{register_modules, PyLocalPhysicalPlan};
+pub use python::{PyLocalPhysicalPlan, register_modules};
 pub use translate::translate;

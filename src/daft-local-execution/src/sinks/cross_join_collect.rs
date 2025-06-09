@@ -9,7 +9,7 @@ use super::blocking_sink::{
     BlockingSink, BlockingSinkFinalizeResult, BlockingSinkSinkResult, BlockingSinkState,
     BlockingSinkStatus,
 };
-use crate::{state_bridge::BroadcastStateBridgeRef, ExecutionTaskSpawner};
+use crate::{ExecutionTaskSpawner, state_bridge::BroadcastStateBridgeRef};
 
 struct CrossJoinCollectState(Option<Vec<RecordBatch>>);
 

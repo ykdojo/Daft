@@ -3,12 +3,12 @@ use std::{ops::Range, sync::Arc, time::Duration};
 use async_trait::async_trait;
 use common_io_config::GCSConfig;
 use common_runtime::get_io_pool_num_threads;
-use futures::{stream::BoxStream, TryStreamExt};
+use futures::{TryStreamExt, stream::BoxStream};
 use google_cloud_storage::{
-    client::{google_cloud_auth::credentials::CredentialsFile, Client, ClientConfig},
+    client::{Client, ClientConfig, google_cloud_auth::credentials::CredentialsFile},
     http::{
-        objects::{get::GetObjectRequest, list::ListObjectsRequest},
         Error as GError,
+        objects::{get::GetObjectRequest, list::ListObjectsRequest},
     },
 };
 use google_cloud_token::{TokenSource, TokenSourceProvider};
@@ -17,11 +17,11 @@ use snafu::{IntoError, ResultExt, Snafu};
 use tokio::sync::Semaphore;
 
 use crate::{
+    FileFormat, GetResult,
     object_io::{FileMetadata, FileType, LSResult, ObjectSource},
     retry::{ExponentialBackoff, RetryError},
     stats::IOStatsRef,
     stream_utils::io_stats_on_bytestream,
-    FileFormat, GetResult,
 };
 
 const GCS_DELIMITER: &str = "/";
@@ -461,7 +461,9 @@ impl GCSSource {
             match attempted {
                 Ok(attempt) => attempt,
                 Err(err) => {
-                    log::warn!("Google Cloud Storage Credentials not provided or found when making client. Reverting to Anonymous mode.\nDetails\n{err}");
+                    log::warn!(
+                        "Google Cloud Storage Credentials not provided or found when making client. Reverting to Anonymous mode.\nDetails\n{err}"
+                    );
                     ClientConfig::default().anonymous()
                 }
             }
@@ -472,7 +474,7 @@ impl GCSSource {
         }
         client_config.http = Some({
             use reqwest_middleware::ClientBuilder;
-            use reqwest_retry::{policies::ExponentialBackoff, RetryTransientMiddleware};
+            use reqwest_retry::{RetryTransientMiddleware, policies::ExponentialBackoff};
             use retry_policies::Jitter;
             let retry_policy = ExponentialBackoff::builder()
                 .base(2)

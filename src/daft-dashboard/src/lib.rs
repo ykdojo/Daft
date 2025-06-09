@@ -4,15 +4,15 @@ mod response;
 
 use std::{io::Cursor, net::Ipv4Addr, sync::Arc};
 
-use http_body_util::{combinators::BoxBody, BodyExt, Full};
+use http_body_util::{BodyExt, Full, combinators::BoxBody};
 use hyper::{
+    Method, Request, Response, StatusCode,
     body::{Bytes, Incoming},
     server::conn::http1,
     service::service_fn,
-    Method, Request, Response, StatusCode,
 };
 use hyper_util::rt::TokioIo;
-use include_dir::{include_dir, Dir};
+use include_dir::{Dir, include_dir};
 use parking_lot::RwLock;
 #[cfg(feature = "python")]
 use pyo3::prelude::*;

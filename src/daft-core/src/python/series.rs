@@ -16,9 +16,9 @@ use pyo3::{
 
 use crate::{
     array::{
-        ops::{as_arrow::AsArrow, DaftLogical},
-        pseudo_arrow::PseudoArrowArray,
         DataArray,
+        ops::{DaftLogical, as_arrow::AsArrow},
+        pseudo_arrow::PseudoArrowArray,
     },
     count_mode::CountMode,
     datatypes::{DataType, Field, ImageMode, PythonType},
@@ -53,9 +53,16 @@ impl PySeries {
         let vec_pyobj: Vec<PyObject> = pylist.extract()?;
         let dtype = match pyobj {
             "force" => DataType::Python,
-            "allow" => infer_daft_dtype_for_sequence(&vec_pyobj, py, name)?.unwrap_or(DataType::Python),
-            "disallow" => panic!("Cannot create a Series from a pylist and being strict about only using Arrow types by setting pyobj=disallow"),
-            _ => panic!("Unsupported pyobj behavior when creating Series from pylist: {}", pyobj)
+            "allow" => {
+                infer_daft_dtype_for_sequence(&vec_pyobj, py, name)?.unwrap_or(DataType::Python)
+            }
+            "disallow" => panic!(
+                "Cannot create a Series from a pylist and being strict about only using Arrow types by setting pyobj=disallow"
+            ),
+            _ => panic!(
+                "Unsupported pyobj behavior when creating Series from pylist: {}",
+                pyobj
+            ),
         };
         let vec_pyobj_arced = vec_pyobj.into_iter().map(Arc::new).collect();
         let arrow_array: Box<dyn arrow2::array::Array> =

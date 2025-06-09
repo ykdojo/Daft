@@ -1,4 +1,4 @@
-use crate::{ops::AsImageObj, DaftImageBuffer};
+use crate::{DaftImageBuffer, ops::AsImageObj};
 
 pub struct ImageBufferIter<'a, Arr>
 where

@@ -1,4 +1,3 @@
-#![feature(let_chains)]
 #![feature(if_let_guard)]
 
 mod arithmetic;
@@ -18,15 +17,14 @@ mod visitor;
 mod treenode;
 pub use common_treenode;
 pub use expr::{
-    binary_op, count_actor_pool_udfs, deduplicate_expr_names, estimated_selectivity,
-    exprs_to_schema, has_agg, is_actor_pool_udf, is_partition_compatible, left_col, resolved_col,
-    right_col, unresolved_col,
-    window::{WindowBoundary, WindowFrame, WindowSpec},
     AggExpr, ApproxPercentileParams, Column, Expr, ExprRef, Operator, PlanRef, ResolvedColumn,
-    SketchType, Subquery, SubqueryPlan, UnresolvedColumn, WindowExpr,
+    SketchType, Subquery, SubqueryPlan, UnresolvedColumn, WindowExpr, binary_op,
+    count_actor_pool_udfs, deduplicate_expr_names, estimated_selectivity, exprs_to_schema, has_agg,
+    is_actor_pool_udf, is_partition_compatible, left_col, resolved_col, right_col, unresolved_col,
+    window::{WindowBoundary, WindowFrame, WindowSpec},
 };
 pub use lit::{
-    lit, literal_value, literals_to_series, null_lit, FromLiteral, Literal, LiteralValue,
+    FromLiteral, Literal, LiteralValue, lit, literal_value, literals_to_series, null_lit,
 };
 #[cfg(feature = "python")]
 use pyo3::prelude::*;

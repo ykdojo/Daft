@@ -10,7 +10,7 @@ use daft_core::{
 #[cfg(feature = "python")]
 use pyo3::{PyClass, Python};
 
-use super::{deserializer::LiteralValueDeserializer, FromLiteral, Literal, LiteralValue};
+use super::{FromLiteral, Literal, LiteralValue, deserializer::LiteralValueDeserializer};
 #[cfg(feature = "python")]
 use crate::pyobj_serde::PyObjectWrapper;
 
@@ -104,7 +104,7 @@ macro_rules! impl_int_fromliteral {
                     _ => {
                         return Err(DaftError::ValueError(format!(
                             "Expected integer number, received: {lit}"
-                        )))
+                        )));
                     }
                 };
 
@@ -137,7 +137,7 @@ macro_rules! impl_float_fromliteral {
                     _ => {
                         return Err(DaftError::ValueError(format!(
                             "Expected floating point number, received: {lit}"
-                        )))
+                        )));
                     }
                 };
 

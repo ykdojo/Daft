@@ -3,18 +3,17 @@ use std::sync::Arc;
 use common_error::DaftError;
 use common_resource_request::ResourceRequest;
 use daft_dsl::{
-    count_actor_pool_udfs, exprs_to_schema,
+    ExprRef, count_actor_pool_udfs, exprs_to_schema,
     functions::python::{get_concurrency, get_resource_request, get_udf_names},
-    ExprRef,
 };
 use daft_schema::schema::SchemaRef;
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 
 use crate::{
+    LogicalPlan,
     logical_plan::{Error, Result},
     stats::StatsState,
-    LogicalPlan,
 };
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -31,7 +30,11 @@ impl ActorPoolProject {
     pub(crate) fn try_new(input: Arc<LogicalPlan>, projection: Vec<ExprRef>) -> Result<Self> {
         let num_actor_pool_udfs: usize = count_actor_pool_udfs(&projection);
         if !num_actor_pool_udfs == 1 {
-            return Err(Error::CreationError { source: DaftError::InternalError(format!("Expected ActorPoolProject to have exactly 1 actor pool UDF expression but found: {num_actor_pool_udfs}")) });
+            return Err(Error::CreationError {
+                source: DaftError::InternalError(format!(
+                    "Expected ActorPoolProject to have exactly 1 actor pool UDF expression but found: {num_actor_pool_udfs}"
+                )),
+            });
         }
 
         let projected_schema = exprs_to_schema(&projection, input.schema())?;

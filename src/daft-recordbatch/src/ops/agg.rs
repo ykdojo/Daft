@@ -1,9 +1,9 @@
 use common_error::{DaftError, DaftResult};
 use daft_core::{array::ops::IntoGroups, prelude::*};
 use daft_dsl::{
+    AggExpr,
     expr::bound_expr::{BoundAggExpr, BoundExpr},
     functions::FunctionExpr,
-    AggExpr,
 };
 
 use crate::RecordBatch;
@@ -93,12 +93,12 @@ impl RecordBatch {
             }) => {
                 return Err(DaftError::ComputeError(
                     "Cannot run actor pool UDF in MapGroups".to_string(),
-                ))
+                ));
             }
             _ => {
                 return Err(DaftError::ComputeError(
                     "Trying to run non-UDF function in MapGroups!".to_string(),
-                ))
+                ));
             }
         };
 

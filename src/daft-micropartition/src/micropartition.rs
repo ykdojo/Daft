@@ -20,10 +20,10 @@ use daft_dsl::ExprRef;
 use daft_io::{IOClient, IOConfig, IOStatsContext, IOStatsRef};
 use daft_json::{JsonConvertOptions, JsonParseOptions, JsonReadOptions};
 use daft_parquet::read::{
-    read_parquet_bulk, read_parquet_metadata_bulk, ParquetSchemaInferenceOptions,
+    ParquetSchemaInferenceOptions, read_parquet_bulk, read_parquet_metadata_bulk,
 };
 use daft_recordbatch::RecordBatch;
-use daft_scan::{storage_config::StorageConfig, ChunkSpec, DataSource, ScanTask};
+use daft_scan::{ChunkSpec, DataSource, ScanTask, storage_config::StorageConfig};
 use daft_stats::{ColumnRangeStatistics, PartitionSpec, TableMetadata, TableStatistics};
 use daft_warc::WarcConvertOptions;
 use futures::{Future, Stream};
@@ -354,7 +354,10 @@ impl MicroPartition {
         metadata: TableMetadata,
         statistics: TableStatistics,
     ) -> Self {
-        assert!(scan_task.pushdowns.filters.is_none(), "Cannot create unloaded MicroPartition from a ScanTask with pushdowns that have filters");
+        assert!(
+            scan_task.pushdowns.filters.is_none(),
+            "Cannot create unloaded MicroPartition from a ScanTask with pushdowns that have filters"
+        );
 
         let schema = scan_task.materialized_schema();
         let fill_map = scan_task.partition_spec().map(|pspec| pspec.to_fill_map());
@@ -1372,7 +1375,7 @@ impl Stream for MicroPartitionStreamAdapter {
                 }
                 Poll::Ready(Ok(Err(e))) => return Poll::Ready(Some(Err(e))),
                 Poll::Ready(Err(e)) => {
-                    return Poll::Ready(Some(Err(DaftError::InternalError(e.to_string()))))
+                    return Poll::Ready(Some(Err(DaftError::InternalError(e.to_string()))));
                 }
                 Poll::Pending => return Poll::Pending,
             }

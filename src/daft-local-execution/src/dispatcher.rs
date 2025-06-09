@@ -5,10 +5,10 @@ use daft_dsl::expr::bound_expr::BoundExpr;
 use daft_micropartition::MicroPartition;
 
 use crate::{
-    buffer::RowBasedBuffer,
-    channel::{create_channel, Receiver, Sender},
-    runtime_stats::CountingReceiver,
     RuntimeHandle, SpawnedTask,
+    buffer::RowBasedBuffer,
+    channel::{Receiver, Sender, create_channel},
+    runtime_stats::CountingReceiver,
 };
 
 /// The `DispatchSpawner` trait is implemented by types that can spawn a task that reads from

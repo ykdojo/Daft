@@ -10,15 +10,15 @@ use common_error::{DaftError, DaftResult};
 use daft_catalog::Identifier;
 use daft_core::prelude::*;
 use daft_dsl::{
+    Column, Expr, ExprRef, LiteralValue, Operator, PlanRef, Subquery, UnresolvedColumn,
     functions::{ScalarFunction, ScalarUDF},
-    has_agg, lit, literals_to_series, null_lit, resolved_col, unresolved_col, Column, Expr,
-    ExprRef, LiteralValue, Operator, PlanRef, Subquery, UnresolvedColumn,
+    has_agg, lit, literals_to_series, null_lit, resolved_col, unresolved_col,
 };
 use daft_functions::numeric::{ceil::ceil, floor::floor};
 use daft_functions_utf8::{ilike, like, to_date, to_datetime};
 use daft_logical_plan::{
-    ops::{SetQuantifier, UnionStrategy},
     JoinOptions, LogicalPlanBuilder, LogicalPlanRef,
+    ops::{SetQuantifier, UnionStrategy},
 };
 use daft_session::Session;
 use itertools::Itertools;
@@ -1004,7 +1004,7 @@ impl SQLPlanner<'_> {
                     return Err(DaftError::ValueError(format!(
                         "Ambiguous column reference in join predicate: {full_name}"
                     ))
-                    .into())
+                    .into());
                 }
                 (Some(schema), None) | (None, Some(schema)) => {
                     if let Some(expr) = expr_from_idents(
@@ -1157,9 +1157,9 @@ impl SQLPlanner<'_> {
             Value::Boolean(b) => LiteralValue::Boolean(*b),
             Value::Null => LiteralValue::Null,
             _ => {
-                return Err(PlannerError::invalid_operation(
-                    format!("Only string, number, boolean and null literals are supported. Instead found: `{value}`"),
-                ))
+                return Err(PlannerError::invalid_operation(format!(
+                    "Only string, number, boolean and null literals are supported. Instead found: `{value}`"
+                )));
             }
         })
     }
@@ -1218,11 +1218,7 @@ impl SQLPlanner<'_> {
                     .collect::<SQLPlannerResult<Vec<_>>>()?;
 
                 let expr = expr.is_in(list);
-                if *negated {
-                    Ok(expr.not())
-                } else {
-                    Ok(expr)
-                }
+                if *negated { Ok(expr.not()) } else { Ok(expr) }
             }
             SQLExpr::InSubquery {
                 expr,
@@ -1251,11 +1247,7 @@ impl SQLPlanner<'_> {
                 let low = self.plan_expr(low)?;
                 let high = self.plan_expr(high)?;
                 let expr = expr.between(low, high);
-                if *negated {
-                    Ok(expr.not())
-                } else {
-                    Ok(expr)
-                }
+                if *negated { Ok(expr.not()) } else { Ok(expr) }
             }
             SQLExpr::Like {
                 negated,
@@ -1269,11 +1261,7 @@ impl SQLPlanner<'_> {
                 let expr = self.plan_expr(expr)?;
                 let pattern = self.plan_expr(pattern)?;
                 let expr = like(expr, pattern);
-                if *negated {
-                    Ok(expr.not())
-                } else {
-                    Ok(expr)
-                }
+                if *negated { Ok(expr.not()) } else { Ok(expr) }
             }
             SQLExpr::ILike {
                 negated,
@@ -1287,11 +1275,7 @@ impl SQLPlanner<'_> {
                 let expr = self.plan_expr(expr)?;
                 let pattern = self.plan_expr(pattern)?;
                 let expr = ilike(expr, pattern);
-                if *negated {
-                    Ok(expr.not())
-                } else {
-                    Ok(expr)
-                }
+                if *negated { Ok(expr.not()) } else { Ok(expr) }
             }
             SQLExpr::SimilarTo { .. } => unsupported_sql_err!("SIMILAR TO"),
             SQLExpr::RLike { .. } => unsupported_sql_err!("RLIKE"),
@@ -1546,7 +1530,7 @@ impl SQLPlanner<'_> {
                                 return Err(PlannerError::invalid_operation(format!(
                                     "Invalid interval unit: {}",
                                     &cap[2]
-                                )))
+                                )));
                             }
                         };
 
@@ -1622,12 +1606,18 @@ impl SQLPlanner<'_> {
                             DateTimeField::Hour => (0, 0, count * 3_600_000_000_000),
                             DateTimeField::Minute => (0, 0, count * 60_000_000_000),
                             DateTimeField::Second => (0, 0, count * 1_000_000_000),
-                            DateTimeField::Microsecond | DateTimeField::Microseconds => (0, 0, count * 1_000),
-                            DateTimeField::Millisecond | DateTimeField::Milliseconds => (0, 0, count * 1_000_000),
+                            DateTimeField::Microsecond | DateTimeField::Microseconds => {
+                                (0, 0, count * 1_000)
+                            }
+                            DateTimeField::Millisecond | DateTimeField::Milliseconds => {
+                                (0, 0, count * 1_000_000)
+                            }
                             DateTimeField::Nanosecond | DateTimeField::Nanoseconds => (0, 0, count),
-                            _ => return Err(PlannerError::invalid_operation(format!(
-                                "Invalid interval unit: {time_unit}. Expected one of: year, month, week, day, hour, minute, second, millisecond, microsecond, nanosecond"
-                            ))),
+                            _ => {
+                                return Err(PlannerError::invalid_operation(format!(
+                                    "Invalid interval unit: {time_unit}. Expected one of: year, month, week, day, hour, minute, second, millisecond, microsecond, nanosecond"
+                                )));
+                            }
                         };
 
                         Ok(Arc::new(Expr::Literal(LiteralValue::Interval(

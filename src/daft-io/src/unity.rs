@@ -11,9 +11,9 @@ use pyo3::{intern, prelude::*};
 use snafu::ResultExt;
 
 use crate::{
+    IOClient, InvalidUrlSnafu, SourceType,
     object_io::{FileMetadata, GetResult, LSResult, ObjectSource},
     stats::IOStatsRef,
-    IOClient, InvalidUrlSnafu, SourceType,
 };
 
 fn invalid_unity_path(path: &str) -> crate::Error {

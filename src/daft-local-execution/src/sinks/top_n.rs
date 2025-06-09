@@ -4,7 +4,7 @@ use common_error::DaftResult;
 use daft_dsl::expr::bound_expr::BoundExpr;
 use daft_micropartition::MicroPartition;
 use itertools::Itertools;
-use tracing::{instrument, Span};
+use tracing::{Span, instrument};
 
 use super::blocking_sink::{
     BlockingSink, BlockingSinkFinalizeResult, BlockingSinkSinkResult, BlockingSinkState,
@@ -34,7 +34,7 @@ enum TopNState {
 impl TopNState {
     /// Process a new micro-partition and update the top N values
     fn append(&mut self, part: Arc<MicroPartition>) {
-        let Self::Building(ref mut top_values) = self else {
+        let Self::Building(top_values) = self else {
             panic!("TopNSink should be in Building state");
         };
 

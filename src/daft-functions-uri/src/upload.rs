@@ -1,13 +1,13 @@
 use std::{collections::HashSet, iter::repeat_n, path::Path, sync::Arc};
 
-use common_error::{ensure, DaftError, DaftResult};
+use common_error::{DaftError, DaftResult, ensure};
 use common_runtime::get_io_runtime;
 use daft_core::prelude::*;
 use daft_dsl::{
-    functions::{FunctionArgs, ScalarUDF},
     ExprRef,
+    functions::{FunctionArgs, ScalarUDF},
 };
-use daft_io::{get_io_client, IOConfig, IOStatsRef, SourceType};
+use daft_io::{IOConfig, IOStatsRef, SourceType, get_io_client};
 use futures::{StreamExt, TryStreamExt};
 use serde::Serialize;
 
@@ -56,7 +56,7 @@ impl ScalarUDF for UrlUpload {
                 return Err(DaftError::ValueError(format!(
                     "Invalid value for 'on_error': {}",
                     on_error
-                )))
+                )));
             }
         };
 

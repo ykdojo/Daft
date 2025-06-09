@@ -3,22 +3,22 @@ use std::{ops::Range, sync::Arc};
 use async_trait::async_trait;
 use azure_core::{auth::TokenCredential, new_http_client};
 use azure_identity::{ClientSecretCredential, DefaultAzureCredential, TokenCredentialOptions};
-use azure_storage::{prelude::*, CloudLocation};
+use azure_storage::{CloudLocation, prelude::*};
 use azure_storage_blobs::{
     blob::operations::GetBlobResponse,
-    container::{operations::BlobItem, Container},
+    container::{Container, operations::BlobItem},
     prelude::*,
 };
 use common_io_config::AzureConfig;
 use derive_builder::Builder;
-use futures::{stream::BoxStream, StreamExt, TryStreamExt};
+use futures::{StreamExt, TryStreamExt, stream::BoxStream};
 use snafu::{IntoError, ResultExt, Snafu};
 
 use crate::{
+    FileFormat, GetResult,
     object_io::{FileMetadata, FileType, LSResult, ObjectSource},
     stats::IOStatsRef,
     stream_utils::io_stats_on_bytestream,
-    FileFormat, GetResult,
 };
 
 const AZURE_DELIMITER: &str = "/";
@@ -38,7 +38,9 @@ enum Error {
     ContinuationToken { token: String },
 
     // Generic client errors.
-    #[snafu(display("Azure Storage Account not set and is required.\n Set either `AzureConfig.storage_account` or the `AZURE_STORAGE_ACCOUNT` environment variable."))]
+    #[snafu(display(
+        "Azure Storage Account not set and is required.\n Set either `AzureConfig.storage_account` or the `AZURE_STORAGE_ACCOUNT` environment variable."
+    ))]
     StorageAccountNotSet,
     #[snafu(display("Azure client generic error: {}", source))]
     AzureGeneric { source: azure_storage::Error },
