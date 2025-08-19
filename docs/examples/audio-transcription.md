@@ -78,7 +78,6 @@ df = df.select(df["audio"].struct.get("bytes").alias("bytes"))
 # | b"..."     |
 # | b"..."     |
 
-
 # Convert bytes to file-like interface
 df = df.select(file(df["bytes"]).alias("file"))
 # | ---------- |
@@ -86,7 +85,6 @@ df = df.select(file(df["bytes"]).alias("file"))
 # | ---------- |
 # | <file>     |
 # | <file>     |
-
 
 # Transcribe audio
 df = df.select(transcribe(df["file"]))
