@@ -4,7 +4,7 @@ This example demonstrates how to build audio transcription pipelines using Daft 
 
 - **Daft**
 - **Whisper** - OpenAI's speech recognition model
-- **SoundFile** - Audio file reading library
+- **[SoundFile](https://pypi.org/project/soundfile/)** - Audio file reading library
 - **uv** - Python package installer and environment manager
 
 We'll cover two scenarios:
