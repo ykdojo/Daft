@@ -68,8 +68,6 @@ def transcribe(file: daft.File) -> str:
     """
     audio, _ = sf.read(file, dtype = 'float32')
     result = model.transcribe(audio, verbose=True)
-
-
     return result['text']
 
 # Extract bytes from struct column
