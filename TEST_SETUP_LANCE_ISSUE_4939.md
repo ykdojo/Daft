@@ -1,5 +1,19 @@
 # Test Setup for Lance Schema Blob Issue #4939
 
+## Issue Summary
+
+**Issue**: [#4939](https://github.com/Eventual-Inc/Daft/issues/4939) - Lance schema does not work with blob encoding
+
+### Root Cause
+When writing to Lance using `df.write_lance()` with a schema that has `"lance-encoding:blob": "true"` metadata, Daft writes the data using **Legacy binary encoding** instead of the required **blob encoding** format. This causes Lance's `take_blobs()` API to panic with a struct encoding error.
+
+### Solution
+Daft needs to detect when the schema metadata specifies blob encoding and write the data using Lance's blob encoding format instead of defaulting to the legacy binary encoding.
+
+### Encoding Formats (Lance-specific)
+- **Legacy binary encoding**: Lance's older/default format for binary data
+- **Blob encoding**: Lance's newer format optimized for large binary objects, required for the blob API (`take_blobs()`)
+
 ## Test Location
 
 **File**: `tests/io/lancedb/test_lance_schema_blob.py`
@@ -51,8 +65,10 @@ The `DAFT_RUNNER` environment variable **must** be set to either `native` or `ra
 
 ## Current Test Status
 
-The test currently contains two simple failing assertions:
-- `assert 1 == 0` - Placeholder for the actual Lance blob encoding test
-- `assert result is False` - Demonstration of test pattern
+The test file `test_lance_schema_blob.py` contains a comprehensive test that:
+1. Creates a PyArrow schema with blob encoding metadata
+2. Writes data using Daft's `write_lance()` with the blob schema
+3. Attempts to read using Lance's `take_blobs()` API
+4. Currently marked with `@pytest.mark.xfail` as it reproduces the panic error
 
-These are intentionally failing to demonstrate the test setup. The actual implementation for issue #4939 would replace these with proper Lance schema blob encoding tests.
+The test will pass once Daft correctly writes data in blob encoding format when the schema metadata specifies it.
