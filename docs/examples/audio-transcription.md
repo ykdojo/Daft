@@ -31,7 +31,7 @@ $ uv init
 $ uv add daft soundfile openai-whisper
 ```
 
-You can also install using `pip`
+Instead of using uv, you can also install using `pip`
 
 ```bash
 $ pip install daft soundfile openai-whisper
