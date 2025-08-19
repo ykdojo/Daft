@@ -59,7 +59,6 @@ model = whisper.load_model("tiny")  # Use "tiny" for quick demos, "base" or "sma
 # | {bytes: b"...", path: ""} | <text> |
 # | {bytes: b"...", path: ""} | <text> |
 # | {bytes: b"...", path: ""} | <text> |
-#
 df = daft.read_parquet("hf://datasets/MrDragonFox/Elise")
 
 @daft.func
