@@ -49,6 +49,7 @@ import soundfile as sf
 import whisper
 
 model = whisper.load_model("tiny")  # Use "tiny" for quick demos, "base" or "small" for better quality
+# All available models: https://github.com/openai/whisper#available-models-and-languages
 
 # this dataset contains all of the audio inside a binary column within a parquet file. such as
 # | ------------------------  | ----   |
