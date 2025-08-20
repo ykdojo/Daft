@@ -703,6 +703,22 @@ class UnityConfig:
         """Replaces values if provided, returning a new UnityConfig."""
         ...
 
+class HuggingFaceConfig:
+    """I/O configuration for accessing Hugging Face datasets.
+
+    Args:
+        token (str, optional): Your Hugging Face access token, generated from https://huggingface.co/settings/tokens.
+        anonymous (bool, optional): Whether or not to use "anonymous mode", which will access Hugging Face without any credentials. Defaults to False.
+    """
+
+    token: str | None
+    anonymous: bool
+
+    def __init__(self, token: str | None = None, anonymous: bool | None = None): ...
+    def replace(self, token: str | None = None, anonymous: bool | None = None) -> HuggingFaceConfig:
+        """Replaces values if provided, returning a new HuggingFaceConfig."""
+        ...
+
 class IOConfig:
     """Configuration for the native I/O layer, e.g. credentials for accessing cloud storage systems."""
 
@@ -711,6 +727,7 @@ class IOConfig:
     gcs: GCSConfig
     http: HTTPConfig
     unity: UnityConfig
+    hf: HuggingFaceConfig
 
     def __init__(
         self,
@@ -719,6 +736,7 @@ class IOConfig:
         gcs: GCSConfig | None = None,
         http: HTTPConfig | None = None,
         unity: UnityConfig | None = None,
+        hf: HuggingFaceConfig | None = None,
     ): ...
     def replace(
         self,
@@ -727,6 +745,7 @@ class IOConfig:
         gcs: GCSConfig | None = None,
         http: HTTPConfig | None = None,
         unity: UnityConfig | None = None,
+        hf: HuggingFaceConfig | None = None,
     ) -> IOConfig:
         """Replaces values if provided, returning a new IOConfig."""
         ...
@@ -1149,6 +1168,7 @@ class PySchema:
     def _truncated_table_string(self) -> str: ...
     def apply_hints(self, hints: PySchema) -> PySchema: ...
     def display_with_metadata(self, include_metadata: bool = False) -> str: ...
+    def min_estimated_size_column(self) -> str | None: ...
 
 class PyExpr:
     def alias(self, name: str) -> PyExpr: ...
