@@ -23,18 +23,18 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 or see their [installation page](https://docs.astral.sh/uv/getting-started/installation/) for more installation methods.
 
 ```bash
-$ mkdir transcribe_demo
-$ cd transcribe_demo
+mkdir transcribe_demo
+cd transcribe_demo
 # Initialize uv project
-$ uv init
+uv init
 # Install dependencies
-$ uv add daft soundfile openai-whisper
+uv add daft soundfile openai-whisper
 ```
 
 Instead of using `uv`, you can also install using `pip`
 
 ```bash
-$ pip install daft soundfile openai-whisper
+pip install daft soundfile openai-whisper
 ```
 
 ## Example 1: Transcribing Audio Bytes from a Dataset
