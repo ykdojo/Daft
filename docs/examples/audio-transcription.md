@@ -104,7 +104,7 @@ You can also combine these operations into a single pipeline:
 df = daft.read_parquet("hf://datasets/MrDragonFox/Elise")
 df.select(
     transcribe(file(df["audio"].struct.get("bytes")))
-).write_csv("transcriptions.csv")
+).write_csv("transcriptions")
 ```
 
 Now let's run it!
