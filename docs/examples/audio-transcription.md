@@ -98,22 +98,19 @@ df = df.select(transcribe(df["file"]))
 df.write_csv("transcriptions")
 ```
 
-Now let's run it!
-
-```bash
-uv run example_1.py
-```
-
-### Alternative: Compact Version
-
 You can also combine these operations into a single pipeline:
 
 ```python
-# example_1_compact.py
 df = daft.read_parquet("hf://datasets/MrDragonFox/Elise")
 df.select(
     transcribe(file(df["audio"].struct.get("bytes")))
 ).write_csv("transcriptions.csv")
+```
+
+Now let's run it!
+
+```bash
+uv run example_1.py
 ```
 
 ## Example 2: Transcribing Local Audio Files
